@@ -1,0 +1,94 @@
+Sat Apr 19 20:59:37 2025
+Alternative_Saves_Android_Port
+Ren'Py 8.1.3.23091805
+ 
+
+Bootstrap to the start of init.init. took 0.00s
+Bootstrap to the start of init.init. took 0.00s
+
+Manufacturer Xiaomi Model 220333QAG
+Android Version: 13
+Device Arch:  android-arm64_v8a
+
+Screen diagonal is 5.155104039323552 inches.
+Version: Ren'Py 8.1.3.23091805
+Early init. took 0.25s
+Early init. took 0.25s
+Attempting to sync your saves to/from stock ANDROID_PUBLIC location...
+Android search paths: /storage/emulated/0/Android/data/incg.ripples/files/../../../../Documents/INCG_Saves/incg.ripples/game /data/user/0/incg.ripples/files/game
+Loader init. took 0.11s
+Loader init. took 0.11s
+Loading error handling. took 0.62s
+Loading error handling. took 0.62s
+Loading script. took 4.01s
+Loading script. took 4.01s
+Saving to /storage/emulated/0/Android/data/incg.ripples/files/../../../../Documents/INCG_Saves/incg.ripples
+Loading save slot metadata. took 0.27s
+Loading save slot metadata. took 0.27s
+Loading persistent. took 0.00s
+Loading persistent. took 0.00s
+Set script version to: (8, 1, 3)
+ - Init at 00images.rpyc:55 took 1.58349 s.
+Running init code. took 3.58s
+Running init code. took 3.58s
+Loading analysis data. took 0.29s
+Loading analysis data. took 0.29s
+Analyze and compile ATL. took 0.24s
+Analyze and compile ATL. took 0.24s
+Reloading save slot metadata. took 0.17s
+Reloading save slot metadata. took 0.17s
+Index archives took 0.00s
+Index archives took 0.00s
+Dump and make backups. took 0.00s
+Dump and make backups. took 0.00s
+Cleaning cache. took 0.00s
+Cleaning cache. took 0.00s
+Making clean stores. took 0.00s
+Making clean stores. took 0.00s
+Initial gc. took 2.17s
+Initial gc. took 2.17s
+DPI scale factor: 1.000000
+Creating interface object. took 0.02s
+Creating interface object. took 0.02s
+Cleaning stores took 0.01s
+Cleaning stores took 0.01s
+Init translation took 1.76s
+Init translation took 1.76s
+Build styles took 0.01s
+Build styles took 0.01s
+Load screen analysis took 0.16s
+Load screen analysis took 0.16s
+Analyze screens took 0.00s
+Analyze screens took 0.00s
+Save screen analysis took 0.00s
+Save screen analysis took 0.00s
+Prepare screens took 0.46s
+Prepare screens took 0.46s
+Save pyanalysis. took 0.00s
+Save pyanalysis. took 0.00s
+Save bytecode. took 0.00s
+Save bytecode. took 0.00s
+Running _start took 0.01s
+Running _start took 0.01s
+Interface start. took 0.93s
+Interface start. took 0.93s
+
+Initializing gles2 renderer:
+primary display bounds: (0, 0, 1507, 671)
+swap interval: 1 frames
+Fullscreen mode.
+Vendor: "b'Qualcomm'"
+Renderer: b'Adreno (TM) 610'
+Version: b'OpenGL ES 3.2 V@0502.41 (GIT@43fc279f3a, I58833f8ed4, 1679659134) (Date:03/24/23)'
+Display Info: None
+Screen sizes: virtual=(1920, 1080) physical=(1601, 720) drawable=(1601, 720)
+Maximum texture size: 4096x4096
+controller: '05000000386264610000000011000000' 'uinput-silead' 1
+Total time until interface ready: 15.493049144744873s.
+Hid presplash.
+controller: '05000000386264610000000011000000' 'uinput-silead' 1
+Entered background. --------------------------------------------
+Entering foreground. -------------------------------------------
+Screen sizes: virtual=(1920, 1080) physical=(1601, 720) drawable=(1601, 720)
+Maximum texture size: 4096x4096
+Entered background. --------------------------------------------
