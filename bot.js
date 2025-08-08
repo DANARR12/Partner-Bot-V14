@@ -1,4 +1,9 @@
 require('dotenv').config();
+// Ensure the bot token is provided before starting
+if (!process.env.DISCORD_TOKEN || process.env.DISCORD_TOKEN.trim() === '') {
+  console.error('Missing DISCORD_TOKEN. Add it to a .env file or your environment variables.');
+  process.exit(1);
+}
 const { Client, Partials, ChannelType, ActivityType, GatewayIntentBits } = require('discord.js');
 require('@discordjs/voice');
 const client = new Client({ 
@@ -68,7 +73,13 @@ client.on('messageCreate', async (message) => {
   
   if (message.channel.type === ChannelType.DM) {
     try {
-      let share = client.channels.cache.get(partner);
+      let share;
+      try {
+        share = await client.channels.fetch(partner);
+      } catch (fetchErr) {
+        console.error('Failed to fetch partner channel by ID:', fetchErr);
+        return;
+      }
       let args = message.content.split(' ');
       let cool = await db.get(`cool_${message.author.id}`);
 
