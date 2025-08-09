@@ -1,0 +1,15 @@
+[Unit]
+Description=Keep mouse active to prevent sleep
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/workspace
+ExecStart=/usr/bin/python3 /workspace/mouse_nudger.py
+Restart=always
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
