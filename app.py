@@ -11,6 +11,7 @@ def get_profile(username):
         "level": 18,
         "rep": 0,
         "credits": "2.56K",
+        "credit_score": 750,  # <-- Added credit score field
         "rank": 8588129,
         "xp_current": 1441,
         "xp_needed": 2569,
