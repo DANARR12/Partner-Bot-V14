@@ -19,5 +19,10 @@ def get_profile(username):
     }
     return jsonify(profile)
 
+@app.route("/p/<username>", methods=["GET"])
+def get_profile_short(username):
+    # Same functionality as /profile/<username> but shorter URL
+    return get_profile(username)
+
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
