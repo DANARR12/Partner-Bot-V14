@@ -1,2 +1,5 @@
-discord.py>=2.3.0
-python-dotenv>=1.0.0
+# Python Dependencies for XP Bot
+discord.py==2.5.2
+python-dotenv==1.1.1
+
+# Note: For Node.js Discord Partner Bot, run: npm install
