@@ -67,7 +67,7 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // Check cooldown (changed from 5m to 60m as per original code)
+  // Check cooldown
   if (cool && cool > Date.now()) {
     try {
       await message.author.send({ 
