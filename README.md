@@ -1,157 +1,67 @@
-# Discord Partner Bot
+# Discord XP Bot
 
-A Discord bot designed to handle server partnerships and advertisements through direct messages.
+A Discord bot that tracks user activity and awards XP for text messages and voice chat participation.
 
 ## Features
 
-- **Advertisement Handling**: Users can send server invites via DM to be posted in a partner channel
-- **Cooldown System**: 1-hour cooldown between advertisement posts
-- **Auto Voice Channel Join**: Bot automatically joins a specified voice channel
-- **Multi-language Support**: Supports English and Kurdish responses
-- **Error Handling**: Comprehensive error handling and logging
+- 📝 **Text XP**: Users earn XP for sending messages
+- 🎙️ **Voice XP**: Users earn XP for being active in voice channels (anti-AFK measures included)
+- 📊 **Leaderboards**: Daily, weekly, and all-time leaderboards
+- 🔄 **Automatic Resets**: Daily stats reset at midnight UTC, weekly stats reset on Monday
+- 💾 **Data Persistence**: XP data is saved to JSON file with automatic backups
 
 ## Setup
 
-### Prerequisites
+1. **Install Dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-- Node.js 18.0.0 or higher
-- A Discord bot token
-- Discord server with appropriate permissions
+2. **Configure Bot Token**
+   ```bash
+   # Set environment variable
+   export DISCORD_TOKEN='your_bot_token_here'
+   
+   # Or create .env file (copy from .env.example)
+   cp .env.example .env
+   # Edit .env and add your token
+   ```
 
-### Installation
+3. **Bot Permissions**
+   Your bot needs these permissions:
+   - Read Messages
+   - Send Messages
+   - Read Message History
+   - Connect (for voice channels)
+   - View Channels
 
-1. Clone this repository:
-```bash
-git clone <your-repo-url>
-cd discord-partner-bot
-```
-
-2. Install dependencies:
-```bash
-npm install
-```
-
-3. Create environment file:
-```bash
-cp .env.example .env
-```
-
-4. Edit `.env` file and add your Discord bot token:
-```
-DISCORD_TOKEN=your_discord_bot_token_here
-```
-
-5. Create config file:
-```bash
-cp config.example.json config.json
-```
-
-6. Edit `config.json` with your server settings:
-```json
-{
-  "partner": "YOUR_PARTNER_CHANNEL_ID",
-  "link": "https://discord.gg/YOUR_INVITE_LINK", 
-  "idvc": "YOUR_VOICE_CHANNEL_ID"
-}
-```
-
-### Running the Bot
-
-Start the bot:
-```bash
-npm start
-```
-
-For development with auto-restart:
-```bash
-npm run dev
-```
-
-## Configuration
-
-### config.json
-
-- `partner`: Channel ID where advertisements will be posted
-- `link`: Your server's invite link to share with users
-- `idvc`: Voice channel ID for the bot to auto-join
+4. **Run the Bot**
+   ```bash
+   python discord_xp_bot.py
+   ```
 
 ## Usage
 
-### For Users
+### Commands (Type in chat)
+- `t` - Show all-time leaderboard
+- `t day` - Show daily leaderboard  
+- `t week` - Show weekly leaderboard
 
-1. **Request Advertisement**: Send "Reklam" or "reklam" in any server channel
-2. **Submit Advertisement**: DM the bot with a Discord server invite link
-3. **Cooldown**: Wait 1 hour between advertisement submissions
+### XP System
+- **Text Messages**: 10 XP per message
+- **Voice Chat**: 5 XP every 60 seconds (only when not muted/deafened)
 
-### Bot Commands
-
-- Responds to bot mentions with "Dm Me For Ads"
-- Handles advertisement requests automatically
-- Posts valid invites to the partner channel
+### Anti-AFK Measures
+Users must be:
+- Not muted or deafened (by themselves or by server)
+- Not in the AFK channel
+- Not a bot
 
 ## File Structure
+- `discord_xp_bot.py` - Main bot code
+- `xp_data.json` - XP data storage (auto-created)
+- `requirements.txt` - Python dependencies
+- `.env` - Environment variables (create from .env.example)
 
-```
-├── src/
-│   ├── bot.js              # Main bot file (organized version)
-│   ├── events/
-│   │   ├── ready.js        # Ready event handler
-│   │   └── messageCreate.js # Message event handler
-│   └── utils/
-│       └── eventLoader.js  # Event loading utility
-├── bot.js                  # Original monolithic version
-├── config.json            # Bot configuration
-├── .env                   # Environment variables
-└── package.json           # Dependencies and scripts
-```
-
-## Features Breakdown
-
-### Advertisement System
-- Users DM the bot with Discord invite links
-- Bot validates the invite and posts it to the partner channel
-- Includes user attribution and server promotion link
-
-### Cooldown Management
-- 1-hour cooldown per user using `multiple.db`
-- Prevents spam while allowing regular promotion
-- Graceful error handling for cooldown messages
-
-### Voice Channel Integration
-- Automatically joins specified voice channel on startup
-- Maintains persistent voice presence
-- Handles voice connection errors gracefully
-
-### Multi-language Support
-- Kurdish language support for local users
-- English fallbacks for international users
-- Culturally appropriate responses
-
-## Error Handling
-
-The bot includes comprehensive error handling:
-- Database connection errors
-- Discord API failures
-- Invalid invite links
-- Missing channels/permissions
-- Voice connection issues
-
-## Dependencies
-
-- **discord.js**: Discord API wrapper
-- **@discordjs/voice**: Voice channel functionality  
-- **multiple.db**: Simple JSON database
-- **ms**: Time parsing utility
-- **dotenv**: Environment variable management
-
-## License
-
-ISC License - See package.json for details.
-
-## Author
-
-SmSm
-
-## Support
-
-For issues or questions, please check the error logs and ensure all configuration values are correct.
+## Data Backup
+The bot automatically creates timestamped backups if the data file becomes corrupted.

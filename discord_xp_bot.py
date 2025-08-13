@@ -3,16 +3,14 @@ from discord.ext import commands, tasks
 import json
 import os
 import datetime
-from dotenv import load_dotenv
-
-# Load environment variables
-load_dotenv()
 
 # ====== CONFIG ======
 TOKEN = os.getenv("DISCORD_TOKEN")
 if not TOKEN:
-    raise ValueError("DISCORD_TOKEN environment variable not set!")
-
+    print("❌ DISCORD_TOKEN environment variable not set!")
+    print("🔧 Please set your Discord bot token as an environment variable:")
+    print("   export DISCORD_TOKEN='your_bot_token_here'")
+    exit(1)
 TEXT_XP_PER_MESSAGE = 10
 VOICE_XP_INTERVAL = 60
 VOICE_XP_PER_INTERVAL = 5
@@ -29,15 +27,29 @@ intents.voice_states = True
 bot = commands.Bot(command_prefix="", intents=intents)  # No prefix, we check manually
 
 # ====== LOAD DATA ======
-if os.path.exists(DATA_FILE):
-    with open(DATA_FILE, "r") as f:
-        xp_data = json.load(f)
-else:
-    xp_data = {}  # {user_id: {xp fields...}}
+try:
+    if os.path.exists(DATA_FILE):
+        with open(DATA_FILE, "r") as f:
+            xp_data = json.load(f)
+        print(f"✅ Loaded XP data for {len(xp_data)} users")
+    else:
+        xp_data = {}  # {user_id: {xp fields...}}
+        print("📁 Created new XP data file")
+except (json.JSONDecodeError, IOError) as e:
+    print(f"⚠️ Error loading XP data: {e}")
+    print("🔧 Creating backup and starting fresh...")
+    if os.path.exists(DATA_FILE):
+        backup_name = f"{DATA_FILE}.backup.{datetime.datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        os.rename(DATA_FILE, backup_name)
+        print(f"💾 Backup saved as: {backup_name}")
+    xp_data = {}
 
 def save_data():
-    with open(DATA_FILE, "w") as f:
-        json.dump(xp_data, f, indent=4)
+    try:
+        with open(DATA_FILE, "w") as f:
+            json.dump(xp_data, f, indent=4)
+    except IOError as e:
+        print(f"❌ Error saving XP data: {e}")
 
 def ensure_user(user_id: int):
     uid = str(user_id)
@@ -70,43 +82,52 @@ def get_rank(user_id: int, xp_type: str):
 # ====== VOICE XP LOOP (Anti-AFK) ======
 @tasks.loop(seconds=VOICE_XP_INTERVAL)
 async def give_voice_xp():
-    for guild in bot.guilds:
-        afk_channel = guild.afk_channel
-        for vc in guild.voice_channels:
-            if vc == afk_channel:
-                continue
-            for member in vc.members:
-                if member.bot:
+    try:
+        for guild in bot.guilds:
+            afk_channel = guild.afk_channel
+            for vc in guild.voice_channels:
+                if vc == afk_channel:
                     continue
-                if member.voice.self_mute or member.voice.self_deaf:
-                    continue
-                if member.voice.mute or member.voice.deaf:
-                    continue
-                add_xp(member.id, "voice_xp", VOICE_XP_PER_INTERVAL)
+                for member in vc.members:
+                    if member.bot:
+                        continue
+                    if member.voice.self_mute or member.voice.self_deaf:
+                        continue
+                    if member.voice.mute or member.voice.deaf:
+                        continue
+                    add_xp(member.id, "voice_xp", VOICE_XP_PER_INTERVAL)
+    except Exception as e:
+        print(f"❌ Error in voice XP loop: {e}")
 
 @give_voice_xp.before_loop
 async def before_voice_xp():
     await bot.wait_until_ready()
 
 # ====== DAILY RESET ======
-@tasks.loop(hours=24)
+@tasks.loop(time=datetime.time(hour=0, minute=0))  # Reset at midnight UTC
 async def reset_daily():
+    print("🔄 Performing daily XP reset...")
     for user in xp_data.values():
         user["daily_text_xp"] = 0
         user["daily_voice_xp"] = 0
     save_data()
+    print("✅ Daily XP reset completed")
 
 @reset_daily.before_loop
 async def before_daily_reset():
     await bot.wait_until_ready()
 
 # ====== WEEKLY RESET ======
-@tasks.loop(hours=24*7)
+@tasks.loop(time=datetime.time(hour=0, minute=0))  # Check daily for Monday
 async def reset_weekly():
-    for user in xp_data.values():
-        user["weekly_text_xp"] = 0
-        user["weekly_voice_xp"] = 0
-    save_data()
+    # Only reset on Monday (weekday 0)
+    if datetime.datetime.now().weekday() == 0:
+        print("🔄 Performing weekly XP reset...")
+        for user in xp_data.values():
+            user["weekly_text_xp"] = 0
+            user["weekly_voice_xp"] = 0
+        save_data()
+        print("✅ Weekly XP reset completed")
 
 @reset_weekly.before_loop
 async def before_weekly_reset():
@@ -125,15 +146,23 @@ async def on_message(message):
     if message.author.bot:
         return
 
-    add_xp(message.author.id, "text_xp", TEXT_XP_PER_MESSAGE)
+    try:
+        add_xp(message.author.id, "text_xp", TEXT_XP_PER_MESSAGE)
 
-    msg = message.content.strip().lower()
-    if msg == "t":
-        await send_leaderboard(message.channel, message.author, "text_xp", "voice_xp", "All-Time")
-    elif msg == "t day":
-        await send_leaderboard(message.channel, message.author, "daily_text_xp", "daily_voice_xp", "Daily")
-    elif msg == "t week":
-        await send_leaderboard(message.channel, message.author, "weekly_text_xp", "weekly_voice_xp", "Weekly")
+        msg = message.content.strip().lower()
+        if msg == "t":
+            await send_leaderboard(message.channel, message.author, "text_xp", "voice_xp", "All-Time")
+        elif msg == "t day":
+            await send_leaderboard(message.channel, message.author, "daily_text_xp", "daily_voice_xp", "Daily")
+        elif msg == "t week":
+            await send_leaderboard(message.channel, message.author, "weekly_text_xp", "weekly_voice_xp", "Weekly")
+    except Exception as e:
+        print(f"❌ Error processing message: {e}")
+        # Try to send error message to user if possible
+        try:
+            await message.channel.send("⚠️ Something went wrong while processing your message. Please try again.")
+        except:
+            pass
 
 # ====== LEADERBOARD FUNCTION ======
 async def send_leaderboard(channel, author, text_key, voice_key, period_name):
