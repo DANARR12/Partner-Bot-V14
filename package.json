@@ -4,7 +4,11 @@
   "description": "A Discord bot for handling server partnerships and advertisements",
   "main": "bot.js",
   "scripts": {
-    "start": "node bot.js",
+    "start": "pm2 start bot.js --name discord-bot --time",
+    "stop": "pm2 stop discord-bot",
+    "restart": "pm2 restart discord-bot",
+    "status": "pm2 status",
+    "logs": "pm2 logs discord-bot",
     "dev": "nodemon bot.js"
   },
   "keywords": [
