@@ -5,10 +5,18 @@
   "main": "bot.js",
   "scripts": {
     "start": "pm2 start bot.js --name discord-bot --time",
+    "start:all": "pm2 start ecosystem.config.js",
+    "start:xp": "pm2 start discord_xp_bot.py --name discord-xp-bot --interpreter python3 --time",
     "stop": "pm2 stop discord-bot",
+    "stop:all": "pm2 stop all",
+    "stop:xp": "pm2 stop discord-xp-bot",
     "restart": "pm2 restart discord-bot",
+    "restart:all": "pm2 restart all",
+    "restart:xp": "pm2 restart discord-xp-bot",
     "status": "pm2 status",
     "logs": "pm2 logs discord-bot",
+    "logs:xp": "pm2 logs discord-xp-bot",
+    "logs:all": "pm2 logs",
     "dev": "nodemon bot.js"
   },
   "keywords": [
