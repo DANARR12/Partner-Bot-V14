@@ -9,7 +9,12 @@
     "dev": "node --watch src/bot.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["discord", "bot", "partnership", "advertisement"],
+  "keywords": [
+    "discord",
+    "bot",
+    "partnership",
+    "advertisement"
+  ],
   "author": "SmSm",
   "license": "ISC",
   "dependencies": {
