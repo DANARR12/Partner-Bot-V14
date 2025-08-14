@@ -1,0 +1,8 @@
+
+> discord-partner-bot@2.0.0 start
+> node src/bot.js
+
+[EVENT] Loaded messageCreate
+[EVENT] Loaded ready
+WEDNESDAY#1296 is now online!
+WEDNESDAY#1296 Connected To Voice Channel
