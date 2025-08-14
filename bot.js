@@ -6,8 +6,7 @@ const db = require('multiple.db');
 const ms = require('ms');
 const { partner, link, idvc } = require('./config.json');
 
-// Initialize database
-db.useJSON();
+// Initialize database - multiple.db doesn't need useJSON() call
 
 // Create Discord client with proper intents
 const client = new Client({
