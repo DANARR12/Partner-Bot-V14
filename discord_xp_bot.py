@@ -156,6 +156,10 @@ async def on_message(message):
             await send_leaderboard(message.channel, message.author, "daily_text_xp", "daily_voice_xp", "Daily")
         elif msg == "t week":
             await send_leaderboard(message.channel, message.author, "weekly_text_xp", "weekly_voice_xp", "Weekly")
+        elif msg == "t3":
+            # Trigger the T3 command
+            ctx = await bot.get_context(message)
+            await afk_top(ctx)
     except Exception as e:
         print(f"❌ Error processing message: {e}")
         # Try to send error message to user if possible
@@ -204,6 +208,35 @@ async def send_leaderboard(channel, author, text_key, voice_key, period_name):
     )
 
     await channel.send(embed=embed)
+
+# ====== COMMANDS ======
+@bot.command(name="T3")
+async def afk_top(ctx):
+    """Anti-AFK Voice XP Leaderboard - Shows top 10 users by voice XP"""
+    if not xp_data:
+        await ctx.send("No voice XP data yet.")
+        return
+
+    # Sort by voice XP (anti-AFK loop already updates this)
+    sorted_voice = sorted(
+        xp_data.items(), key=lambda x: x[1]["voice_xp"], reverse=True
+    )
+
+    embed = discord.Embed(
+        title="🎙️ Anti-AFK Voice XP Leaderboard",
+        color=discord.Color.blue()
+    )
+
+    for i, (user_id, data) in enumerate(sorted_voice[:10], start=1):
+        member = ctx.guild.get_member(int(user_id))
+        name = member.display_name if member else f"User {user_id}"
+        embed.add_field(
+            name=f"#{i} {name}",
+            value=f"Voice XP: {data['voice_xp']}",
+            inline=False
+        )
+
+    await ctx.send(embed=embed)
 
 # ====== START BOT ======
 if __name__ == "__main__":
