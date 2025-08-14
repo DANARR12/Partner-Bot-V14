@@ -1,75 +1,107 @@
-# Discord Voice Channel Request Bot
+# Discord Advertisement Bot
 
-A Discord bot that allows users to request permission to join voice channels. Members in the target voice channel will receive a DM asking for permission to allow the requester to join.
+A Discord bot that handles server advertisements and automatically joins voice channels.
 
 ## Features
 
-- Request to join any voice channel in the server
-- Members in the target channel receive DM requests for permission
-- Automatic approval if the target channel is empty
-- Beautiful embed messages with member counts
-- Proper error handling and user feedback
-- Secure token management using environment variables
+- **Advertisement Management**: Users can submit server invites via DM
+- **Cooldown System**: 60-minute cooldown between advertisements per user
+- **Auto Voice Connection**: Automatically joins specified voice channel on startup
+- **Multi-language Support**: Supports both English and Kurdish responses
+- **Partner Channel Integration**: Posts advertisements to designated partner channels
 
 ## Setup
 
-1. **Install Dependencies**
-   ```bash
-   pip install -r requirements.txt
-   ```
+### 1. Install Dependencies
 
-2. **Create a Discord Bot**
+```bash
+npm install
+```
+
+### 2. Configuration
+
+1. **Create a Discord Bot**:
    - Go to [Discord Developer Portal](https://discord.com/developers/applications)
    - Create a new application
    - Go to the "Bot" section and create a bot
    - Copy the bot token
 
-3. **Configure Environment Variables**
+2. **Configure Environment Variables**:
    - Rename `.env.example` to `.env`
-   - Replace `your_bot_token_here` with your actual bot token
+   - Add your bot token: `DISCORD_TOKEN=your_token_here`
 
-4. **Invite Bot to Server**
-   - Go to OAuth2 > URL Generator in the Developer Portal
-   - Select the following scopes:
-     - `bot`
-     - `applications.commands`
-   - Select the following bot permissions:
-     - `Send Messages`
-     - `Use Slash Commands`
-     - `Move Members`
-     - `Read Message History`
-     - `Embed Links`
-   - Use the generated URL to invite the bot to your server
-
-5. **Run the Bot**
-   ```bash
-   python discord_vc_bot.py
+3. **Update config.json**:
+   ```json
+   {
+     "partner": "YOUR_PARTNER_CHANNEL_ID",
+     "link": "YOUR_SERVER_INVITE_LINK",
+     "idvc": "YOUR_VOICE_CHANNEL_ID"
+   }
    ```
+
+### 3. Bot Permissions
+
+Ensure your bot has the following permissions:
+- Send Messages
+- Read Message History
+- Connect to Voice Channels
+- Send Messages in Partner Channels
+
+### 4. Run the Bot
+
+```bash
+# Production
+npm start
+
+# Development (with auto-restart)
+npm run dev
+```
 
 ## Usage
 
-- Use the command `!request_vc` to start the voice channel request process
-- Select a voice channel from the buttons that appear
-- Members in the selected channel will receive a DM with approval buttons
-- If approved, the requester will be moved to the target channel
+### Commands
 
-## Security Notes
+- **`reklam`** or **`رێکلام`**: In any server channel, tells users to DM the bot for advertisements
+- **Bot Mention**: When someone mentions the bot, it responds with "Dm Me For Ads"
 
-- Never share your bot token publicly
-- The `.env` file is included in `.gitignore` to prevent accidental commits
-- The bot only responds to the user who initiated the request
+### Advertisement Submission
 
-## Permissions Required
+1. Users DM the bot with a Discord server invite link
+2. The bot validates the invite link
+3. If valid, the advertisement is posted to the partner channel
+4. A 60-minute cooldown is applied to prevent spam
 
-The bot needs the following permissions in your Discord server:
-- Send Messages
-- Use Slash Commands
-- Move Members
-- Read Message History
-- Embed Links
+## File Structure
 
-## Troubleshooting
+```
+├── bot.js          # Main bot file
+├── config.json     # Configuration file
+├── .env           # Environment variables
+├── package.json   # Dependencies and scripts
+└── README.md      # This file
+```
 
-- **Bot not responding**: Check if the bot has the required permissions
-- **Cannot move users**: Ensure the bot has "Move Members" permission and is above the target role in the server hierarchy
-- **DMs not working**: Users may have DMs disabled from server members
+## Dependencies
+
+- `discord.js`: Discord API wrapper
+- `@discordjs/voice`: Voice channel functionality
+- `multiple.db`: Simple JSON database
+- `ms`: Time parsing utility
+- `dotenv`: Environment variable management
+
+## Error Handling
+
+The bot includes comprehensive error handling for:
+- Invalid invite links
+- Missing channels
+- Voice connection failures
+- Database errors
+- Unhandled promise rejections
+
+## Contributing
+
+Feel free to submit issues and enhancement requests!
+
+## License
+
+MIT License - see LICENSE file for details
