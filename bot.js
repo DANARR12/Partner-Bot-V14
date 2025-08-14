@@ -1,4 +1,4 @@
-require('dotenv').config();
+require('dotenv/config');
 const { Client, Partials, ChannelType, ActivityType, GatewayIntentBits } = require('discord.js');
 require('@discordjs/voice');
 const client = new Client({ 
