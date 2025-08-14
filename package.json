@@ -1,15 +1,17 @@
 {
   "name": "discord-partner-bot",
-  "version": "2.0.0",
-  "description": "Discord bot for handling server partnerships and advertisements",
+  "version": "2.1.0",
+  "description": "Discord bot for handling server partnerships and advertisements with improved error handling and modular structure",
   "main": "src/bot.js",
   "scripts": {
     "start": "node src/bot.js",
     "start:legacy": "node bot.js",
     "dev": "node --watch src/bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:debug": "LOG_LEVEL=debug node --watch src/bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "validate-config": "node -e \"require('./src/config/config')\""
   },
-  "keywords": ["discord", "bot", "partnership", "advertisement"],
+  "keywords": ["discord", "bot", "partnership", "advertisement", "modular"],
   "author": "SmSm",
   "license": "ISC",
   "dependencies": {
@@ -25,5 +27,9 @@
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
   }
 }

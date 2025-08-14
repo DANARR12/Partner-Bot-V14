@@ -1,10 +1,11 @@
 require('dotenv').config();
-const { Client, Partials, GatewayIntentBits } = require('discord.js');
-const db = require('multiple.db');
-const { loadEvents } = require('./utils/eventLoader');
+const { Client, Partials, ChannelType, ActivityType, GatewayIntentBits } = require('discord.js');
+require('@discordjs/voice');
 
-// Initialize database
-db.useJSON();
+// Import modules
+const config = require('./config/config');
+const database = require('./utils/database');
+const logger = require('./utils/logger');
 
 // Create Discord client
 const client = new Client({ 
@@ -20,17 +21,47 @@ const client = new Client({
   ]
 });
 
-// Load events
-loadEvents(client);
+// Import event handlers
+const readyHandler = require('./events/ready');
+const messageHandler = require('./events/messageCreate');
+const voiceHandler = require('./events/voiceReady');
 
-// Handle uncaught errors
+// Register event handlers
+client.once('ready', readyHandler);
+client.on('messageCreate', messageHandler.handleAdRequest);
+client.on('messageCreate', messageHandler.handleMentions);
+client.on('messageCreate', messageHandler.handleDMAdvertisements);
+client.on('ready', voiceHandler);
+
+// Global error handlers
 process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+  logger.error('Unhandled Rejection at:', promise, 'reason:', reason);
 });
 
 process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
+  logger.error('Uncaught Exception:', err);
+  process.exit(1);
+});
+
+// Graceful shutdown
+process.on('SIGINT', () => {
+  logger.info('Received SIGINT, shutting down gracefully...');
+  client.destroy();
+  process.exit(0);
+});
+
+process.on('SIGTERM', () => {
+  logger.info('Received SIGTERM, shutting down gracefully...');
+  client.destroy();
+  process.exit(0);
 });
 
 // Login to Discord
-client.login(process.env.DISCORD_TOKEN);
+client.login(process.env.DISCORD_TOKEN)
+  .then(() => {
+    logger.info('Successfully logged in to Discord');
+  })
+  .catch((error) => {
+    logger.error('Failed to login to Discord:', error);
+    process.exit(1);
+  });
