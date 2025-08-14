@@ -1,159 +1,154 @@
 require('dotenv').config();
 const { Client, Partials, ChannelType, ActivityType, GatewayIntentBits } = require('discord.js');
 require('@discordjs/voice');
-const client = new Client({ 
-  partials: [Partials.Channel, Partials.Message, Partials.GuildMember, Partials.DirectMessage], 
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers,
-    GatewayIntentBits.DirectMessageTyping,
-    GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.GuildInvites
-  ]
-});
-
+const { joinVoiceChannel } = require('@discordjs/voice');
 const db = require('multiple.db');
-db.useJSON();
 const ms = require('ms');
 const { partner, link, idvc } = require('./config.json');
 
-client.once('ready', async () => {
-  console.log(`${client.user.tag} is now online!`);
-  client.user.setActivity(`Wednesday`, { type: ActivityType.Watching });
+// Initialize database
+db.useJSON();
+
+// Create Discord client with proper intents
+const client = new Client({
+    partials: [
+        Partials.Channel,
+        Partials.Messages,
+        Partials.GuildMembers,
+        Partials.DirectMessages
+    ],
+    intents: [
+        GatewayIntentBits.Guilds,
+        GatewayIntentBits.GuildMessages,
+        GatewayIntentBits.MessageContent,
+        GatewayIntentBits.GuildMembers,
+        GatewayIntentBits.DirectMessageTyping,
+        GatewayIntentBits.DirectMessages,
+        GatewayIntentBits.GuildInvites
+    ]
 });
 
-// Handle advertisement requests in public channels
-client.on("messageCreate", (message) => {
-  if (message.author.bot) return;
+// Bot ready event
+client.once('ready', async () => {
+    console.log(`✅ ${client.user.tag} is now online!`);
+    client.user.setActivity('Wednesday', { type: ActivityType.Watching });
+    
+    // Connect to voice channel
+    await connectToVoiceChannel();
+});
 
-  if (message.content === "Reklam" || message.content === "reklam") {
-    message.reply(`رێکلام لە تایبەت بۆم بنێرە`);
-  }
+// Connect to voice channel function
+async function connectToVoiceChannel() {
+    try {
+        const channel = await client.channels.fetch(idvc);
+        if (!channel) {
+            console.log('❌ Voice channel not found');
+            return;
+        }
+        
+        const voiceConnection = joinVoiceChannel({
+            channelId: channel.id,
+            guildId: channel.guild.id,
+            adapterCreator: channel.guild.voiceAdapterCreator,
+            selfDeaf: true,
+            selfMute: true
+        });
+        
+        console.log(`🎵 ${client.user.tag} connected to voice channel: ${channel.name}`);
+    } catch (error) {
+        console.error('❌ Error connecting to voice channel:', error);
+    }
+}
+
+// Handle advertisement requests in guild channels
+client.on("messageCreate", (message) => {
+    if (message.author.bot || message.channel.type === ChannelType.DM) return;
+    
+    const content = message.content.toLowerCase();
+    
+    if (content === "reklam" || content === "رێکلام") {
+        message.reply('رێکلام لە تایبەت بۆم بنێرە');
+    }
 });
 
 // Handle bot mentions
-client.on("messageCreate", async message => {
-  if (message.channel.type === ChannelType.DM) return;
-  if (message.author.bot) return;
-  if (!message.guild) return;
-  
-  if (!message.member) {
-    try {
-      message.member = await message.guild.members.fetch(message.author.id);
-    } catch (error) {
-      console.error('Failed to fetch member:', error);
-      return;
+client.on("messageCreate", async (message) => {
+    if (message.channel.type === ChannelType.DM) return;
+    if (message.author.bot) return;
+    if (!message.guild) return;
+    
+    if (!message.member) {
+        message.member = await message.guild.fetchMember(message.author.id);
     }
-  }
 
-  if (message.content.match(new RegExp(`^<@!?${client.user.id}>`))) {
-    return message.channel.send(`**Dm Me For Ads**`);
-  }
+    if (message.content.match(new RegExp(`^<@!?${client.user.id}>`))) {
+        return message.channel.send('**Dm Me For Ads**');
+    }
 });
 
-// Handle DM advertisements
+// Handle advertisement submissions in DMs
 client.on('messageCreate', async (message) => {
-  if (message.author.bot) return;
-  if (message.channel.type !== ChannelType.DM) return;
-  
-  const share = client.channels.cache.get(partner);
-  const args = message.content.split(' ');
-  const cool = await db.get(`cool_${message.author.id}`);
-
-  if (!share) {
-    console.error('Partner channel not found!');
-    return;
-  }
-
-  // Check cooldown
-  if (cool && cool > Date.now()) {
+    if (message.author.bot || message.channel.type !== ChannelType.DM) return;
+    
+    const share = client.channels.cache.get(partner);
+    if (!share) {
+        console.log('❌ Partner channel not found');
+        return;
+    }
+    
+    // Check cooldown
+    const cool = await db.get(`cool_${message.author.id}`);
+    if (cool && cool > Date.now()) {
+        const remainingTime = Math.ceil((cool - Date.now()) / (1000 * 60));
+        const cooldownMessage = `ببورن ئەتوانن دووبارە ڕیکلامەکەت بنێرن دوای ${remainingTime} خولەک`;
+        
+        try {
+            await message.author.send({ content: cooldownMessage });
+        } catch (error) {
+            console.log('Could not send DM to user:', error);
+        }
+        return;
+    }
+    
+    // Process advertisement
     try {
-      await message.author.send({ 
-        content: 'ببورن ئەتوانن دووبارە ڕیکلامەکەت بنێرن دوای ١ کاتژمێر' 
-      });
-    } catch (err) {
-      try {
-        await message.channel.send({ 
-          content: `${message.author} Sorry You Can Send Your Advertisement Again After 1 Hour` 
+        const args = message.content.split(' ');
+        const invite = await client.fetchInvite(args[0]);
+        
+        if (!invite) {
+            await message.channel.send({ content: '> **:x: | Invalid Link Try Again!**' });
+            return;
+        }
+        
+        // Set cooldown (60 minutes)
+        const cooldownTime = Date.now() + ms('60m');
+        await db.set(`cool_${message.author.id}`, cooldownTime);
+        
+        // Send advertisement to partner channel
+        await share.send({
+            content: `${invite}\n**📨 Posted By** ${message.author}`
         });
-      } catch (error) {
-        console.error('Failed to send cooldown message:', error);
-      }
-    }
-    return;
-  }
-
-  const cooldownTime = Date.now() + ms('60m');
-  
-  try {
-    const invite = await client.fetchInvite(args[0]);
-    
-    // Set cooldown
-    await db.set(`cool_${message.author.id}`, cooldownTime);
-    
-    // Post advertisement
-    await share.send({ 
-      content: `${invite}\n**📨 Posted By** ${message.author}` 
-    });
-    
-    // Confirm to user
-    try {
-      await message.channel.send({ 
-        content: `> 📪 **Posted In ${share}**\n> 📮 **Post This Link in Your Server To** ${link}` 
-      });
-    } catch (err) {
-      await message.channel.send({ 
-        content: `> **${message.author} Your Server Posted in ${share}**` 
-      });
-    }
-    
-  } catch (err) {
-    console.error('Invalid invite error:', err);
-    try {
-      await message.channel.send({ 
-        content: '> **:x: | Invalid Link Try Again!**' 
-      });
+        
+        // Confirm to user
+        const successMessage = `> 📪 **Posted In ${share}**\n> 📮 **Post This Link in Your Server To** ${link}`;
+        await message.channel.send({ content: successMessage });
+        
     } catch (error) {
-      console.error('Failed to send invalid link message:', error);
+        console.error('Error processing advertisement:', error);
+        await message.channel.send({ content: '> **:x: | Invalid Link Try Again!**' });
     }
-  }
 });
 
-// Auto-join voice channel on ready
-client.on("ready", async () => {
-  try {
-    const { joinVoiceChannel } = require('@discordjs/voice');
-    
-    const channel = await client.channels.fetch(idvc);
-    if (!channel) {
-      console.error('Voice channel not found!');
-      return;
-    }
-    
-    console.log(`${client.user.tag} Connected To Voice Channel`);
-    
-    const voiceConnection = joinVoiceChannel({
-      channelId: channel.id,
-      guildId: channel.guild.id,
-      adapterCreator: channel.guild.voiceAdapterCreator,
-      selfDeaf: true,
-      selfMute: true
-    });
-    
-  } catch (err) {
-    console.error('Failed to join voice channel:', err);
-  }
+// Error handling
+process.on('unhandledRejection', (error) => {
+    console.error('Unhandled promise rejection:', error);
 });
 
-// Handle uncaught errors
-process.on('unhandledRejection', (reason, promise) => {
-  console.error('Unhandled Rejection at:', promise, 'reason:', reason);
+process.on('uncaughtException', (error) => {
+    console.error('Uncaught exception:', error);
 });
 
-process.on('uncaughtException', (err) => {
-  console.error('Uncaught Exception:', err);
+// Login to Discord
+client.login(process.env.DISCORD_TOKEN).catch(error => {
+    console.error('❌ Failed to login:', error);
 });
-
-client.login(process.env.DISCORD_TOKEN);
