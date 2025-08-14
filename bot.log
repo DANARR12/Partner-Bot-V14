@@ -1,0 +1,10 @@
+2025-08-14 12:12:00,695 - __main__ - ERROR - DISCORD_TOKEN environment variable not set!
+2025-08-14 12:12:16,795 - discord.client - WARNING - PyNaCl is not installed, voice will NOT be supported
+2025-08-14 12:12:16,795 - __main__ - INFO - No existing data file found, starting fresh
+2025-08-14 12:12:16,796 - discord.client - INFO - logging in using static token
+2025-08-14 12:12:17,669 - discord.gateway - INFO - Shard ID None has connected to Gateway (Session ID: 7d266daf4828f01df6b6a8cf5d8a688e).
+2025-08-14 12:12:19,678 - __main__ - INFO - ✅ Logged in as WEDNESDAY#1296
+2025-08-14 12:12:19,678 - __main__ - INFO - Bot is in 2 guilds
+2025-08-14 12:12:19,678 - __main__ - INFO - Voice XP loop started
+2025-08-14 12:12:19,678 - __main__ - INFO - Daily reset loop started
+2025-08-14 12:12:19,678 - __main__ - INFO - Weekly reset loop started

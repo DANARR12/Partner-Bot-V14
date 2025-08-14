@@ -5,6 +5,10 @@ import os
 import datetime
 import logging
 from typing import Dict, Any, Optional
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 # ====== LOGGING SETUP ======
 logging.basicConfig(
