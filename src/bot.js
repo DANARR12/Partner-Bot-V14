@@ -8,7 +8,7 @@ db.useJSON();
 
 // Create Discord client
 const client = new Client({ 
-  partials: [Partials.Channel, Partials.Message, Partials.GuildMember, Partials.DirectMessage], 
+  partials: [Partials.Channel, Partials.Message, Partials.GuildMember, Partials.User], 
   intents: [
     GatewayIntentBits.Guilds,
     GatewayIntentBits.GuildMessages,
@@ -16,7 +16,8 @@ const client = new Client({
     GatewayIntentBits.GuildMembers,
     GatewayIntentBits.DirectMessageTyping,
     GatewayIntentBits.DirectMessages,
-    GatewayIntentBits.GuildInvites
+    GatewayIntentBits.GuildInvites,
+    GatewayIntentBits.GuildVoiceStates
   ]
 });
 
