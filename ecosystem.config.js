@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: 'discord-ad-bot',
-      script: 'src/bot-with-dashboard.js',
+      script: 'src/bot-with-auth.js',
       instances: 1,
       autorestart: true,
       watch: false,

@@ -10,3 +10,25 @@
 2025-08-14T16:12:57: 🟢 WEDNESDAY#1296 is now online!
 2025-08-14T16:12:57: 🌐 Dashboard available at: http://localhost:3000
 2025-08-14T16:12:57: 🔊 WEDNESDAY#1296 Connected To Voice Channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠
+2025-08-14T16:34:52: [dotenv@17.2.1] injecting env (7) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+2025-08-14T16:34:52: 🌐 Web dashboard server started on port 3000
+2025-08-14T16:34:52: 📊 Dashboard URL: http://localhost:3000
+2025-08-14T16:34:53: 🟢 WEDNESDAY#1296 is now online!
+2025-08-14T16:34:53: 🌐 Dashboard available at: http://localhost:3000
+2025-08-14T16:34:53: 🔊 WEDNESDAY#1296 Connected To Voice Channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠
+2025-08-14T16:35:29: [dotenv@17.2.1] injecting env (7) from .env -- tip: ⚙️  suppress all logs with { quiet: true }
+2025-08-14T16:35:30: 🌐 Secure web dashboard server started on port 3000
+2025-08-14T16:35:30: 📊 Dashboard URL: http://localhost:3000
+2025-08-14T16:35:30: 🔐 Login URL: http://localhost:3000/auth/login
+2025-08-14T16:35:30: 🟢 WEDNESDAY#1296 is now online!
+2025-08-14T16:35:30: 🌐 Dashboard available at: http://localhost:3000
+2025-08-14T16:35:30: 🔐 OAuth Client ID: your_discord_client_id_here
+2025-08-14T16:35:30: 🔊 WEDNESDAY#1296 Connected To Voice Channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠
+2025-08-14T16:35:59: [dotenv@17.2.1] injecting env (7) from .env -- tip: 🛠️  run anywhere with `dotenvx run -- yourcommand`
+2025-08-14T16:36:00: 🌐 Secure web dashboard server started on port 3000
+2025-08-14T16:36:00: 📊 Dashboard URL: http://localhost:3000
+2025-08-14T16:36:00: 🔐 Login URL: http://localhost:3000/auth/login
+2025-08-14T16:36:00: 🟢 WEDNESDAY#1296 is now online!
+2025-08-14T16:36:00: 🌐 Dashboard available at: http://localhost:3000
+2025-08-14T16:36:00: 🔐 OAuth Client ID: your_discord_client_id_here
+2025-08-14T16:36:00: 🔊 WEDNESDAY#1296 Connected To Voice Channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠
