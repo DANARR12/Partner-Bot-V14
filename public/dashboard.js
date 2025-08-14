@@ -43,6 +43,8 @@ class BotDashboard {
             this.loadRecentAds();
         } else if (sectionId === 'statistics') {
             this.updateChart();
+        } else if (sectionId === 'dashboard') {
+            this.updateStatus();
         }
     }
 
