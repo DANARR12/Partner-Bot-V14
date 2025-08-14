@@ -6,16 +6,36 @@
   "scripts": {
     "start": "node src/bot.js",
     "start:legacy": "node bot.js",
+    "start:dashboard": "node src/bot-with-dashboard.js",
+    "start:auth": "node src/bot-with-auth.js",
+    "start:forever": "pm2 start ecosystem.config.js",
+    "stop": "pm2 stop discord-ad-bot",
+    "restart": "pm2 restart discord-ad-bot",
+    "reload": "pm2 reload discord-ad-bot",
+    "delete": "pm2 delete discord-ad-bot",
+    "status": "pm2 status",
+    "logs": "pm2 logs discord-ad-bot",
+    "monitor": "pm2 monit",
     "dev": "node --watch src/bot.js",
+    "dev:dashboard": "node --watch src/bot-with-dashboard.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": ["discord", "bot", "partnership", "advertisement"],
+  "keywords": [
+    "discord",
+    "bot",
+    "partnership",
+    "advertisement"
+  ],
   "author": "SmSm",
   "license": "ISC",
   "dependencies": {
     "@discordjs/voice": "^0.16.1",
+    "axios": "^1.11.0",
+    "cors": "^2.8.5",
     "discord.js": "^14.14.1",
-    "dotenv": "^16.3.1",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "express-session": "^1.18.2",
     "ffmpeg-static": "^5.2.0",
     "ms": "^2.1.3",
     "multiple.db": "^0.0.3"

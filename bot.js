@@ -71,12 +71,12 @@ client.on('messageCreate', async (message) => {
   if (cool && cool > Date.now()) {
     try {
       await message.author.send({ 
-        content: 'ببورن ئەتوانن دووبارە ڕیکلامەکەت بنێرن دوای ١ کاتژمێر' 
+        content: 'ببورن ئەتوانن دووبارە ڕیکلامەکەت بنێرن دوای 5خولەک' 
       });
     } catch (err) {
       try {
         await message.channel.send({ 
-          content: `${message.author} Sorry You Can Send Your Advertisement Again After 1 Hour` 
+          content: `${message.author} Sorry You Can Send Your Advertisement Again After 5m` 
         });
       } catch (error) {
         console.error('Failed to send cooldown message:', error);
