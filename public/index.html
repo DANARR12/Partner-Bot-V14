@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord Bot Dashboard</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <style>
+        .sidebar {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .nav-link {
+            color: white !important;
+            border-radius: 8px;
+            margin: 5px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            transform: translateX(5px);
+        }
+        
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2);
+            font-weight: bold;
+        }
+        
+        .status-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+        
+        .status-card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .status-online {
+            color: #28a745;
+        }
+        
+        .status-offline {
+            color: #dc3545;
+        }
+        
+        .content-section {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            border-radius: 15px;
+        }
+        
+        .chart-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .refresh-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar p-3">
+                <div class="text-center mb-4">
+                    <i class="fas fa-robot fa-3x mb-2"></i>
+                    <h4>Bot Dashboard</h4>
+                    <small class="text-white-50">Discord Advertisement Bot</small>
+                </div>
+                
+                <nav class="nav flex-column">
+                    <a class="nav-link active" href="#" data-section="overview">
+                        <i class="fas fa-tachometer-alt me-2"></i>
+                        Overview
+                    </a>
+                    <a class="nav-link" href="#" data-section="recent-ads">
+                        <i class="fas fa-list me-2"></i>
+                        Recent Ads
+                    </a>
+                    <a class="nav-link" href="#" data-section="statistics">
+                        <i class="fas fa-chart-line me-2"></i>
+                        Statistics
+                    </a>
+                </nav>
+                
+                <div class="mt-auto pt-4">
+                    <small class="text-white-50">
+                        <i class="fas fa-info-circle me-1"></i>
+                        Real-time monitoring
+                    </small>
+                </div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 p-4">
+                <!-- Overview Section -->
+                <div id="overview" class="content-section">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-tachometer-alt me-2"></i>Bot Overview</h2>
+                        <button class="btn btn-primary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                        </button>
+                    </div>
+                    
+                    <!-- Status Cards -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="status-card p-3 h-100">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-power-off fa-2x text-primary"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1">Bot Status</h6>
+                                        <div id="bot-status" class="fw-bold">
+                                            <i class="fas fa-circle text-warning"></i> Checking...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="status-card p-3 h-100">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-server fa-2x text-info"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1">Servers</h6>
+                                        <div id="guild-count" class="fw-bold fs-4">0</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="status-card p-3 h-100">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-clock fa-2x text-success"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1">Uptime</h6>
+                                        <div id="uptime" class="fw-bold">0h 0m</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-3">
+                            <div class="status-card p-3 h-100">
+                                <div class="d-flex align-items-center">
+                                    <div class="flex-shrink-0">
+                                        <i class="fas fa-volume-up fa-2x text-warning"></i>
+                                    </div>
+                                    <div class="flex-grow-1 ms-3">
+                                        <h6 class="mb-1">Voice Status</h6>
+                                        <div id="voice-status" class="fw-bold">
+                                            <i class="fas fa-circle text-warning"></i> Checking...
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Bot Info Card -->
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="status-card p-4">
+                                <h5><i class="fas fa-robot me-2"></i>Bot Information</h5>
+                                <hr>
+                                <div class="mb-2">
+                                    <strong>Bot Tag:</strong> 
+                                    <span id="bot-tag" class="text-muted">Not connected</span>
+                                </div>
+                                <div class="mb-2">
+                                    <strong>Last Update:</strong> 
+                                    <span id="last-update" class="text-muted">Never</span>
+                                </div>
+                                <div>
+                                    <strong>Features:</strong>
+                                    <ul class="list-unstyled mt-2">
+                                        <li><i class="fas fa-check text-success me-2"></i>Advertisement Processing</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Cooldown Management</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Voice Channel Auto-join</li>
+                                        <li><i class="fas fa-check text-success me-2"></i>Bilingual Support</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <div class="stats-card p-4">
+                                <h5><i class="fas fa-chart-bar me-2"></i>Quick Stats</h5>
+                                <hr class="text-white">
+                                <div class="row text-center">
+                                    <div class="col-6">
+                                        <div class="fs-3 fw-bold" id="total-ads-today">0</div>
+                                        <small>Ads Today</small>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="fs-3 fw-bold" id="total-ads-week">0</div>
+                                        <small>Ads This Week</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Recent Ads Section -->
+                <div id="recent-ads" class="content-section d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-list me-2"></i>Recent Advertisements</h2>
+                        <button class="btn btn-primary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="table-container">
+                        <table id="recent-ads-table" class="table table-hover mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>User</th>
+                                    <th>Server Name</th>
+                                    <th>Timestamp</th>
+                                    <th>Invite</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td colspan="4" class="text-center py-4">
+                                        <i class="fas fa-spinner fa-spin me-2"></i>Loading...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Statistics Section -->
+                <div id="statistics" class="content-section d-none">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <h2><i class="fas fa-chart-line me-2"></i>Advertisement Statistics</h2>
+                        <button class="btn btn-primary" onclick="refreshData()">
+                            <i class="fas fa-sync-alt me-1"></i>Refresh
+                        </button>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h5 class="text-center mb-4">Advertisements Over Time (Last 7 Days)</h5>
+                        <canvas id="adsChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Floating Refresh Button -->
+    <button class="btn btn-primary btn-lg refresh-btn rounded-circle" onclick="refreshData()" title="Refresh Data">
+        <i class="fas fa-sync-alt"></i>
+    </button>
+    
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dashboard JS -->
+    <script src="dashboard.js"></script>
+</body>
+</html>
