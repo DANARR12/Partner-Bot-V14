@@ -5,7 +5,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js"
+    "dev": "nodemon index.js",
+    "forever": "forever start index.js",
+    "forever:stop": "forever stop index.js",
+    "forever:restart": "forever restart index.js",
+    "forever:list": "forever list"
   },
   "keywords": [
     "discord",
