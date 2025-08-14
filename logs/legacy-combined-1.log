@@ -1,0 +1,240 @@
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:1:1)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)
+Error: Cannot find module 'multiple.db'
+Require stack:
+- /workspace/bot.js
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1401:15)
+    at Hook._require.Module.require (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/require-in-the-middle/index.js:81:25)
+    at require (node:internal/modules/helpers:135:16)
+    at Object.<anonymous> (/workspace/bot.js:18:12)
+    at Module._compile (node:internal/modules/cjs/loader:1730:14)
+    at Object..js (node:internal/modules/cjs/loader:1895:10)
+    at Module.load (node:internal/modules/cjs/loader:1465:32)
+    at Function._load (node:internal/modules/cjs/loader:1282:12)
+    at /home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/lib/ProcessContainer.js:292:27
+    at wrapper (/home/ubuntu/.nvm/versions/node/v22.16.0/lib/node_modules/pm2/node_modules/async/internal/once.js:12:16)

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const { Client, Partials, ChannelType, ActivityType, GatewayIntentBits } = require('discord.js');
 require('@discordjs/voice');
+
 const client = new Client({ 
   partials: [Partials.Channel, Partials.Message, Partials.GuildMember, Partials.DirectMessage], 
   intents: [
@@ -19,6 +20,7 @@ db.useJSON();
 const ms = require('ms');
 const { partner, link, idvc } = require('./config.json');
 
+// Bot ready event
 client.once('ready', async () => {
   console.log(`${client.user.tag} is now online!`);
   client.user.setActivity(`Wednesday`, { type: ActivityType.Watching });
@@ -28,7 +30,10 @@ client.once('ready', async () => {
 client.on("messageCreate", (message) => {
   if (message.author.bot) return;
 
-  if (message.content === "Reklam" || message.content === "reklam") {
+  if (message.content === "Reklam") {
+    message.reply(`رێکلام لە تایبەت بۆم بنێرە`);
+  }
+  if (message.content === "reklam") {
     message.reply(`رێکلام لە تایبەت بۆم بنێرە`);
   }
 });
@@ -67,7 +72,7 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  // Check cooldown
+  // Check cooldown (changed from 5m to 60m for consistency)
   if (cool && cool > Date.now()) {
     try {
       await message.author.send({ 

@@ -1,0 +1,126 @@
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+Error: Cannot find module '/workspace/node_modules/dotenv/lib/main.js'
+    at createEsmNotFoundErr (node:internal/modules/cjs/loader:1437:15)
+    at finalizeEsmResolution (node:internal/modules/cjs/loader:1426:15)
+    at resolveExports (node:internal/modules/cjs/loader:657:14)
+    at Function._findPath (node:internal/modules/cjs/loader:749:31)
+    at Function._resolveFilename (node:internal/modules/cjs/loader:1387:27)
+    at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+    at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+    at Function._load (node:internal/modules/cjs/loader:1211:37)
+    at TracingChannel.traceSync (node:diagnostics_channel:322:14)
+    at wrapModuleLoad (node:internal/modules/cjs/loader:235:24)
+2025-08-14 09:18:26 +00:00: [32m[2025-08-14T09:18:26.015Z] [INFO] Database loaded successfully from data.json[0m
+2025-08-14 09:18:26 +00:00: [32m[2025-08-14T09:18:26.803Z] [INFO] Successfully logged in to Discord[0m
+2025-08-14 09:18:26 +00:00: [32m[2025-08-14T09:18:26.883Z] [INFO] WEDNESDAY#1296 is now online![0m
+2025-08-14 09:18:26 +00:00: [32m[2025-08-14T09:18:26.883Z] [INFO] Bot activity set successfully[0m
+2025-08-14 09:18:26 +00:00: [32m[2025-08-14T09:18:26.883Z] [INFO] Connected to 2 guilds[0m
+2025-08-14 09:18:26 +00:00: [32m[2025-08-14T09:18:26.883Z] [INFO] Serving 1601 users[0m
+2025-08-14 09:18:26 +00:00: [32m[2025-08-14T09:18:26.883Z] [INFO] WEDNESDAY#1296 attempting to connect to voice channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠[0m
+2025-08-14 09:18:26 +00:00: [32m[2025-08-14T09:18:26.884Z] [INFO] WEDNESDAY#1296 successfully connected to voice channel[0m
+2025-08-14 09:48:24 +00:00: [32m[2025-08-14T09:48:24.649Z] [INFO] Database loaded successfully from data.json[0m
+2025-08-14 09:48:25 +00:00: [32m[2025-08-14T09:48:25.277Z] [INFO] Successfully logged in to Discord[0m
+2025-08-14 09:48:25 +00:00: [32m[2025-08-14T09:48:25.364Z] [INFO] WEDNESDAY#1296 is now online![0m
+2025-08-14 09:48:25 +00:00: [32m[2025-08-14T09:48:25.364Z] [INFO] Bot activity set successfully[0m
+2025-08-14 09:48:25 +00:00: [32m[2025-08-14T09:48:25.365Z] [INFO] Connected to 2 guilds[0m
+2025-08-14 09:48:25 +00:00: [32m[2025-08-14T09:48:25.365Z] [INFO] Serving 1601 users[0m
+2025-08-14 09:48:25 +00:00: [32m[2025-08-14T09:48:25.365Z] [INFO] WEDNESDAY#1296 attempting to connect to voice channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠[0m
+2025-08-14 09:48:25 +00:00: [32m[2025-08-14T09:48:25.366Z] [INFO] WEDNESDAY#1296 successfully connected to voice channel[0m

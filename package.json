@@ -1,29 +1,56 @@
 {
   "name": "discord-partner-bot",
-  "version": "2.0.0",
-  "description": "Discord bot for handling server partnerships and advertisements",
+  "version": "2.1.0",
+  "description": "Discord bot for handling server partnerships and advertisements with improved error handling and modular structure",
   "main": "src/bot.js",
   "scripts": {
     "start": "node src/bot.js",
     "start:legacy": "node bot.js",
     "dev": "node --watch src/bot.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev:debug": "LOG_LEVEL=debug node --watch src/bot.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "validate-config": "node -e \"require('./src/config/config')\"",
+    "forever": "pm2 start ecosystem.config.js",
+    "forever:dev": "pm2 start ecosystem.config.js --env development",
+    "forever:legacy": "pm2 start ecosystem.config.js --only discord-partner-bot-legacy",
+    "stop": "pm2 stop discord-partner-bot",
+    "stop:all": "pm2 stop all",
+    "restart": "pm2 restart discord-partner-bot",
+    "restart:all": "pm2 restart all",
+    "reload": "pm2 reload discord-partner-bot",
+    "delete": "pm2 delete discord-partner-bot",
+    "delete:all": "pm2 delete all",
+    "status": "pm2 status",
+    "logs": "pm2 logs discord-partner-bot",
+    "logs:all": "pm2 logs",
+    "monitor": "pm2 monit",
+    "startup": "pm2 startup",
+    "save": "pm2 save"
   },
-  "keywords": ["discord", "bot", "partnership", "advertisement"],
+  "keywords": [
+    "discord",
+    "bot",
+    "partnership",
+    "advertisement",
+    "modular"
+  ],
   "author": "SmSm",
   "license": "ISC",
   "dependencies": {
     "@discordjs/voice": "^0.16.1",
     "discord.js": "^14.14.1",
-    "dotenv": "^16.3.1",
+    "dotenv": "^16.6.1",
     "ffmpeg-static": "^5.2.0",
-    "ms": "^2.1.3",
-    "multiple.db": "^0.0.3"
+    "ms": "^2.1.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
   },
   "engines": {
     "node": ">=18.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "."
   }
 }

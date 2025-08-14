@@ -1,34 +1,22 @@
 const { ActivityType } = require('discord.js');
-const { joinVoiceChannel } = require('@discordjs/voice');
-const { idvc } = require('../../config.json');
+const logger = require('../utils/logger');
 
-module.exports = {
-  name: 'ready',
-  once: true,
-  async execute(client) {
-    console.log(`${client.user.tag} is now online!`);
+module.exports = async (client) => {
+  try {
+    logger.info(`${client.user.tag} is now online!`);
+    
+    // Set bot activity
     client.user.setActivity(`Wednesday`, { type: ActivityType.Watching });
-
-    // Auto-join voice channel
-    try {
-      const channel = await client.channels.fetch(idvc);
-      if (!channel) {
-        console.error('Voice channel not found!');
-        return;
-      }
-      
-      console.log(`${client.user.tag} Connected To Voice Channel`);
-      
-      const voiceConnection = joinVoiceChannel({
-        channelId: channel.id,
-        guildId: channel.guild.id,
-        adapterCreator: channel.guild.voiceAdapterCreator,
-        selfDeaf: true,
-        selfMute: true
-      });
-      
-    } catch (err) {
-      console.error('Failed to join voice channel:', err);
-    }
-  },
+    logger.info('Bot activity set successfully');
+    
+    // Log guild count
+    logger.info(`Connected to ${client.guilds.cache.size} guilds`);
+    
+    // Log user count
+    const totalUsers = client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0);
+    logger.info(`Serving ${totalUsers} users`);
+    
+  } catch (error) {
+    logger.error('Error in ready event:', error);
+  }
 };
