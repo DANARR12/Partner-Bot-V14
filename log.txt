@@ -107,3 +107,12 @@ Entered background. --------------------------------------------
 [2025-08-14T09:17:29.203Z] [INFO] Serving 1601 users
 [2025-08-14T09:17:29.203Z] [INFO] WEDNESDAY#1296 attempting to connect to voice channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠
 [2025-08-14T09:17:29.203Z] [INFO] WEDNESDAY#1296 successfully connected to voice channel
+[2025-08-14T09:18:21.352Z] [INFO] Received SIGTERM, shutting down gracefully...
+[2025-08-14T09:18:26.015Z] [INFO] Database loaded successfully from data.json
+[2025-08-14T09:18:26.803Z] [INFO] Successfully logged in to Discord
+[2025-08-14T09:18:26.883Z] [INFO] WEDNESDAY#1296 is now online!
+[2025-08-14T09:18:26.883Z] [INFO] Bot activity set successfully
+[2025-08-14T09:18:26.883Z] [INFO] Connected to 2 guilds
+[2025-08-14T09:18:26.883Z] [INFO] Serving 1601 users
+[2025-08-14T09:18:26.883Z] [INFO] WEDNESDAY#1296 attempting to connect to voice channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠
+[2025-08-14T09:18:26.884Z] [INFO] WEDNESDAY#1296 successfully connected to voice channel
