@@ -1,0 +1,12 @@
+2025-08-14T16:12:40: [dotenv@17.2.1] injecting env (1) from .env -- tip: 📡 version env with Radar: https://dotenvx.com/radar
+2025-08-14T16:12:41: 🌐 Web dashboard server started on port 3000
+2025-08-14T16:12:41: 📊 Dashboard URL: http://localhost:3000
+2025-08-14T16:12:41: 🟢 WEDNESDAY#1296 is now online!
+2025-08-14T16:12:41: 🌐 Dashboard available at: http://localhost:3000
+2025-08-14T16:12:41: 🔊 WEDNESDAY#1296 Connected To Voice Channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠
+2025-08-14T16:12:56: [dotenv@17.2.1] injecting env (1) from .env -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+2025-08-14T16:12:57: 🌐 Web dashboard server started on port 3000
+2025-08-14T16:12:57: 📊 Dashboard URL: http://localhost:3000
+2025-08-14T16:12:57: 🟢 WEDNESDAY#1296 is now online!
+2025-08-14T16:12:57: 🌐 Dashboard available at: http://localhost:3000
+2025-08-14T16:12:57: 🔊 WEDNESDAY#1296 Connected To Voice Channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠
