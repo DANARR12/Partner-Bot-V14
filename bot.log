@@ -2,3 +2,20 @@ nohup: ignoring input
 🔑 Successfully logged in to Discord
 ✅ WEDNESDAY#1296 is now online!
 🔊 WEDNESDAY#1296 connected to voice channel: ║﹒𝐖𝐨𝐫𝐤𝐢𝐧𝐠
+/workspace/node_modules/@discordjs/voice/dist/index.js:362
+      this.socket.once("close", () => reject(new Error("Cannot perform IP discovery - socket closed")));
+                                             ^
+
+Error: Cannot perform IP discovery - socket closed
+    at Socket.<anonymous> (/workspace/node_modules/@discordjs/voice/dist/index.js:362:46)
+    at Object.onceWrapper (node:events:632:28)
+    at Socket.emit (node:events:530:35)
+    at socketCloseNT (node:dgram:808:8)
+    at process.processTicksAndRejections (node:internal/process/task_queues:89:21)
+Emitted 'error' event on VoiceConnection instance at:
+    at VoiceConnection.onNetworkingError (/workspace/node_modules/@discordjs/voice/dist/index.js:1914:10)
+    at Networking.emit (node:events:518:28)
+    at /workspace/node_modules/@discordjs/voice/dist/index.js:729:32
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+
+Node.js v22.16.0
