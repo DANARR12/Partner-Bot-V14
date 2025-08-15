@@ -1,52 +1,46 @@
-import { Message } from 'discord.js';
+import { Client, Message } from 'discord.js';
 import { AntiRaid } from '../core/antiRaid.js';
 
-let antiRaidInstance: AntiRaid | null = null;
-
-export function setAntiRaidInstance(instance: AntiRaid): void {
-  antiRaidInstance = instance;
-}
-
-export async function handleMessageCreate(message: Message): Promise<void> {
-  try {
-    // Ignore bot messages and DMs
-    if (message.author.bot || !message.guild) {
-      return;
-    }
-
-    // Check for spam patterns
-    if (isSpamMessage(message)) {
-      console.log(`🚨 Potential spam detected from ${message.author.tag}: ${message.content}`);
-      
-      if (antiRaidInstance) {
-        await antiRaidInstance.handleMessageSpam(message.guild, message.author.id);
+export function attachMessageCreate(client: Client, antiRaid: AntiRaid): void {
+  client.on('messageCreate', async (message: Message) => {
+    try {
+      // Ignore bot messages and DMs
+      if (message.author.bot || !message.guild) {
+        return;
       }
-    }
 
-    // Check for raid keywords
-    if (containsRaidKeywords(message.content)) {
-      console.log(`⚠️  Raid keywords detected from ${message.author.tag}: ${message.content}`);
-      
-      // Log for monitoring
-      const logChannel = message.guild.channels.cache.find(
-        channel => channel.type === 0 && channel.name.includes('mod-log')
-      );
-      
-      if (logChannel && logChannel.type === 0) {
-        await logChannel.send({
-          embeds: [{
-            color: 0xffa500,
-            title: '⚠️ Raid Keywords Detected',
-            description: `User: ${message.author.tag}\nChannel: ${message.channel}\nContent: ${message.content}`,
-            timestamp: new Date().toISOString()
-          }]
-        });
+      // Check for spam patterns
+      if (isSpamMessage(message)) {
+        console.log(`🚨 Potential spam detected from ${message.author.tag}: ${message.content}`);
+        
+        await antiRaid.handleMessageSpam(message.guild, message.author.id);
       }
-    }
 
-  } catch (error) {
-    console.error('Error handling message create:', error);
-  }
+      // Check for raid keywords
+      if (containsRaidKeywords(message.content)) {
+        console.log(`⚠️  Raid keywords detected from ${message.author.tag}: ${message.content}`);
+        
+        // Log for monitoring
+        const logChannel = message.guild.channels.cache.find(
+          channel => channel.type === 0 && channel.name.includes('mod-log')
+        );
+        
+        if (logChannel && logChannel.type === 0) {
+          await logChannel.send({
+            embeds: [{
+              color: 0xffa500,
+              title: '⚠️ Raid Keywords Detected',
+              description: `User: ${message.author.tag}\nChannel: ${message.channel}\nContent: ${message.content}`,
+              timestamp: new Date().toISOString()
+            }]
+          });
+        }
+      }
+
+    } catch (error) {
+      console.error('Error handling message create:', error);
+    }
+  });
 }
 
 function isSpamMessage(message: Message): boolean {

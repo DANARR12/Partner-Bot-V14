@@ -1,52 +1,37 @@
-import { Client, GatewayIntentBits, Collection } from 'discord.js';
-import { config } from './config.js';
+import 'dotenv/config';
+import { Client, GatewayIntentBits, Partials, Collection } from 'discord.js';
+import { registerLockdownCommand, registerAntiRaidCommand } from './commands/lockdown.js';
+import { attachGuildMemberAdd } from './handlers/guildMemberAdd.js';
+import { attachMessageCreate } from './handlers/messageCreate.js';
+import { attachAuditLogWatchers } from './handlers/auditLog.js';
 import { AntiRaid } from './core/antiRaid.js';
-import { handleGuildMemberAdd, setAntiRaidInstance as setMemberAddInstance } from './handlers/guildMemberAdd.js';
-import { handleMessageCreate, setAntiRaidInstance as setMessageCreateInstance } from './handlers/messageCreate.js';
-import { handleAuditLog } from './handlers/auditLog.js';
 
 const client = new Client({
   intents: [
     GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMembers,
+    GatewayIntentBits.GuildMembers,   // required for join events
     GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
+    GatewayIntentBits.MessageContent, // for content checks (links/mentions)
+    GatewayIntentBits.GuildWebhooks,
     GatewayIntentBits.GuildModeration
-  ]
+  ],
+  partials: [Partials.Channel]
 });
 
-// Initialize anti-raid system
+// simple command registry
+(client as any).commands = new Collection();
+
 const antiRaid = new AntiRaid(client);
+(client as any).antiRaidInstance = antiRaid;
+registerLockdownCommand(client, antiRaid);
+registerAntiRaidCommand(client, antiRaid);
 
-// Set global instance for handlers
-(global as any).antiRaidInstance = antiRaid;
-
-// Set instances for handlers
-setMemberAddInstance(antiRaid);
-setMessageCreateInstance(antiRaid);
-
-// Command collection
-client.commands = new Collection();
+attachGuildMemberAdd(client, antiRaid);
+attachMessageCreate(client, antiRaid);
+attachAuditLogWatchers(client, antiRaid);
 
 client.once('ready', () => {
-  console.log(`🚀 ${client.user?.tag} is ready!`);
-  console.log(`📊 Monitoring ${client.guilds.cache.size} guilds`);
-  console.log(`🛡️ Anti-raid system initialized`);
+  console.log(`Logged in as ${client.user?.tag}`);
 });
 
-// Event handlers
-client.on('guildMemberAdd', handleGuildMemberAdd);
-client.on('messageCreate', handleMessageCreate);
-client.on('guildAuditLogEntryCreate', handleAuditLog);
-
-// Error handling
-client.on('error', (error) => {
-  console.error('Discord client error:', error);
-});
-
-process.on('unhandledRejection', (error) => {
-  console.error('Unhandled promise rejection:', error);
-});
-
-// Login
-client.login(config.discord.token);
+client.login(process.env.DISCORD_TOKEN);

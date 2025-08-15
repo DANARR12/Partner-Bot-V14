@@ -1,25 +1,30 @@
-import { SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } from 'discord.js';
+import { Client, SlashCommandBuilder, PermissionFlagsBits, EmbedBuilder } from 'discord.js';
 import { AntiRaidConfig } from '../config.js';
+import { AntiRaid } from '../core/antiRaid.js';
 
-export const data = new SlashCommandBuilder()
-  .setName('antiraid')
-  .setDescription('View anti-raid system status and statistics')
-  .addSubcommand(subcommand =>
-    subcommand
-      .setName('status')
-      .setDescription('Show current anti-raid system status')
-  )
-  .addSubcommand(subcommand =>
-    subcommand
-      .setName('stats')
-      .setDescription('Show anti-raid statistics')
-  )
-  .addSubcommand(subcommand =>
-    subcommand
-      .setName('config')
-      .setDescription('Show current anti-raid configuration')
-  )
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+export function registerAntiRaidCommand(client: Client, antiRaid: AntiRaid): void {
+  const data = new SlashCommandBuilder()
+    .setName('antiraid')
+    .setDescription('View anti-raid system status and statistics')
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('status')
+        .setDescription('Show current anti-raid system status')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('stats')
+        .setDescription('Show anti-raid statistics')
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('config')
+        .setDescription('Show current anti-raid configuration')
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+
+  client.commands.set('antiraid', { data, execute });
+}
 
 export async function execute(interaction: any): Promise<void> {
   if (!interaction.guild) {
@@ -93,8 +98,8 @@ async function showStatus(interaction: any): Promise<void> {
 async function showStats(interaction: any): Promise<void> {
   const guild = interaction.guild;
   
-  // Get anti-raid instance to access statistics
-  const antiRaidInstance = (global as any).antiRaidInstance;
+  // Get anti-raid instance from the command context
+  const antiRaidInstance = (interaction.client as any).antiRaidInstance;
   const detections = antiRaidInstance ? antiRaidInstance.getRaidDetections(guild.id) : [];
   
   const totalDetections = detections.length;

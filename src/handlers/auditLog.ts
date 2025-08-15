@@ -1,29 +1,31 @@
-import { GuildAuditLogsEntry, AuditLogEvent } from 'discord.js';
+import { Client, GuildAuditLogsEntry, AuditLogEvent } from 'discord.js';
 
-export async function handleAuditLog(auditLog: GuildAuditLogsEntry): Promise<void> {
-  try {
-    // Monitor for suspicious moderation actions
-    switch (auditLog.action) {
-      case AuditLogEvent.MemberKick:
-      case AuditLogEvent.MemberBanAdd:
-      case AuditLogEvent.MemberBanRemove:
-      case AuditLogEvent.MemberUpdate:
-        await handleMemberModeration(auditLog);
-        break;
-      
-      case AuditLogEvent.ChannelDelete:
-      case AuditLogEvent.RoleDelete:
-        await handleDestructiveAction(auditLog);
-        break;
-      
-      case AuditLogEvent.WebhookCreate:
-      case AuditLogEvent.WebhookUpdate:
-        await handleWebhookAction(auditLog);
-        break;
+export function attachAuditLogWatchers(client: Client): void {
+  client.on('guildAuditLogEntryCreate', async (auditLog: GuildAuditLogsEntry) => {
+    try {
+      // Monitor for suspicious moderation actions
+      switch (auditLog.action) {
+        case AuditLogEvent.MemberKick:
+        case AuditLogEvent.MemberBanAdd:
+        case AuditLogEvent.MemberBanRemove:
+        case AuditLogEvent.MemberUpdate:
+          await handleMemberModeration(auditLog);
+          break;
+        
+        case AuditLogEvent.ChannelDelete:
+        case AuditLogEvent.RoleDelete:
+          await handleDestructiveAction(auditLog);
+          break;
+        
+        case AuditLogEvent.WebhookCreate:
+        case AuditLogEvent.WebhookUpdate:
+          await handleWebhookAction(auditLog);
+          break;
+      }
+    } catch (error) {
+      console.error('Error handling audit log:', error);
     }
-  } catch (error) {
-    console.error('Error handling audit log:', error);
-  }
+  });
 }
 
 async function handleMemberModeration(auditLog: GuildAuditLogsEntry): Promise<void> {

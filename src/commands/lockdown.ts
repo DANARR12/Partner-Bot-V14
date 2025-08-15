@@ -1,26 +1,31 @@
-import { SlashCommandBuilder, PermissionFlagsBits, GuildMember, TextChannel } from 'discord.js';
+import { Client, SlashCommandBuilder, PermissionFlagsBits, GuildMember, TextChannel } from 'discord.js';
 import { AntiRaidConfig } from '../config.js';
+import { AntiRaid } from '../core/antiRaid.js';
 
-export const data = new SlashCommandBuilder()
-  .setName('lockdown')
-  .setDescription('Enable or disable server lockdown')
-  .addSubcommand(subcommand =>
-    subcommand
-      .setName('enable')
-      .setDescription('Enable server lockdown')
-      .addStringOption(option =>
-        option
-          .setName('reason')
-          .setDescription('Reason for lockdown')
-          .setRequired(false)
-      )
-  )
-  .addSubcommand(subcommand =>
-    subcommand
-      .setName('disable')
-      .setDescription('Disable server lockdown')
-  )
-  .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+export function registerLockdownCommand(client: Client, antiRaid: AntiRaid): void {
+  const data = new SlashCommandBuilder()
+    .setName('lockdown')
+    .setDescription('Enable or disable server lockdown')
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('enable')
+        .setDescription('Enable server lockdown')
+        .addStringOption(option =>
+          option
+            .setName('reason')
+            .setDescription('Reason for lockdown')
+            .setRequired(false)
+        )
+    )
+    .addSubcommand(subcommand =>
+      subcommand
+        .setName('disable')
+        .setDescription('Disable server lockdown')
+    )
+    .setDefaultMemberPermissions(PermissionFlagsBits.ManageGuild);
+
+  client.commands.set('lockdown', { data, execute });
+}
 
 export async function execute(interaction: any): Promise<void> {
   if (!interaction.guild) {
