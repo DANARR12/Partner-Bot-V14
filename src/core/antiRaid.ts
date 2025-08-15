@@ -1,6 +1,6 @@
 import { Client, Guild, GuildMember, TextChannel, PermissionFlagsBits } from 'discord.js';
 import { rateLimiter } from '../utils/rateLimiter.js';
-import { config } from '../config.js';
+import { AntiRaidConfig } from '../config.js';
 import { RaidDetection, RaidAction } from '../types.js';
 
 export class AntiRaid {
@@ -14,32 +14,32 @@ export class AntiRaid {
 
   async handleMemberJoin(guild: Guild, member: GuildMember): Promise<void> {
     const guildKey = `guild:${guild.id}:joins`;
-    const { count } = await rateLimiter.increment(guildKey, config.antiRaid.memberJoinTimeWindow);
+    const { count } = await rateLimiter.increment(guildKey, AntiRaidConfig.joinWindowMs);
 
     // Check for raid conditions
-    if (count >= config.antiRaid.memberJoinThreshold) {
+    if (count >= AntiRaidConfig.joinThreshold) {
       await this.triggerRaidProtection(guild, 'member_join', {
         count,
-        timeWindow: config.antiRaid.memberJoinTimeWindow,
+        timeWindow: AntiRaidConfig.joinWindowMs,
         members: [member]
       });
     }
 
     // Check account age
     const accountAge = Date.now() - member.user.createdTimestamp;
-    if (accountAge < config.antiRaid.accountAgeThreshold) {
+    if (accountAge < AntiRaidConfig.minAccountAgeMs) {
       await this.handleNewAccount(guild, member, accountAge);
     }
   }
 
   async handleMessageSpam(guild: Guild, userId: string): Promise<void> {
     const userKey = `user:${userId}:messages:${guild.id}`;
-    const { count } = await rateLimiter.increment(userKey, config.antiRaid.messageSpamTimeWindow);
+    const { count } = await rateLimiter.increment(userKey, AntiRaidConfig.channelWindowMs);
 
-    if (count >= config.antiRaid.messageSpamThreshold) {
+    if (count >= AntiRaidConfig.channelMsgThreshold) {
       await this.triggerRaidProtection(guild, 'message_spam', {
         count,
-        timeWindow: config.antiRaid.messageSpamTimeWindow,
+        timeWindow: AntiRaidConfig.channelWindowMs,
         userId
       });
     }
@@ -150,16 +150,16 @@ export class AntiRaid {
   private async muteUser(guild: Guild, userId: string): Promise<void> {
     const member = await guild.members.fetch(userId);
     if (member) {
-      await member.timeout(300000, 'Spam detected'); // 5 minutes
+      await member.timeout(AntiRaidConfig.timeoutMinutes * 60 * 1000, 'Spam detected');
     }
   }
 
   private async handleNewAccount(guild: Guild, member: GuildMember, accountAge: number): Promise<void> {
     const daysOld = Math.floor(accountAge / (24 * 60 * 60 * 1000));
     
-    // Auto-timeout very new accounts
-    if (daysOld < 1) {
-      await member.timeout(600000, 'New account protection'); // 10 minutes
+    // Auto-timeout very new accounts (less than 3 days)
+    if (daysOld < 3) {
+      await member.timeout(AntiRaidConfig.timeoutMinutes * 60 * 1000, 'New account protection');
     }
   }
 

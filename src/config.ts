@@ -13,13 +13,6 @@ const configSchema = z.object({
   redis: z.object({
     url: z.string().optional(),
   }),
-  antiRaid: z.object({
-    memberJoinThreshold: z.number().default(10),
-    memberJoinTimeWindow: z.number().default(10000), // 10 seconds
-    messageSpamThreshold: z.number().default(5),
-    messageSpamTimeWindow: z.number().default(5000), // 5 seconds
-    accountAgeThreshold: z.number().default(7 * 24 * 60 * 60 * 1000), // 7 days
-  }),
 });
 
 const config = configSchema.parse({
@@ -31,13 +24,40 @@ const config = configSchema.parse({
   redis: {
     url: process.env.REDIS_URL,
   },
-  antiRaid: {
-    memberJoinThreshold: 10,
-    memberJoinTimeWindow: 10000,
-    messageSpamThreshold: 5,
-    messageSpamTimeWindow: 5000,
-    accountAgeThreshold: 7 * 24 * 60 * 60 * 1000,
-  },
 });
+
+export const AntiRaidConfig = {
+  // Join burst control
+  joinWindowMs: 60_000,
+  joinThreshold: 10,           // if >10 joins in 60s -> lockdown triggers
+
+  // New-account sensitivity
+  minAccountAgeMs: 1000 * 60 * 60 * 24 * 3, // 3 days (newer accounts flagged)
+
+  // Mention spam
+  mentionWindowMs: 10_000,
+  mentionThreshold: 8,         // 8 mentions in 10s => timeout
+
+  // Link & invite
+  linkWindowMs: 10_000,
+  linkThreshold: 6,            // 6 links in 10s => escalate
+  blockInvites: true,
+
+  // Channel flood
+  channelWindowMs: 10_000,
+  channelMsgThreshold: 25,     // 25 msgs/10s across channels => lockdown
+
+  // Webhook flood
+  webhookWindowMs: 30_000,
+  webhookMsgThreshold: 30,
+
+  // Actions
+  timeoutMinutes: 30,
+  banOnExtreme: true,
+
+  // Lockdown behavior
+  lockdownDurationMs: 30 * 60_000, // 30 minutes
+  lockdownRolesToClamp: ["@everyone"], // roles to deny Send Msg / Connect
+};
 
 export { config };
