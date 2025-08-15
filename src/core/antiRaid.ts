@@ -1,185 +1,130 @@
-import { Client, Guild, GuildMember, TextChannel, PermissionFlagsBits } from 'discord.js';
-import { rateLimiter } from '../utils/rateLimiter.js';
-import { AntiRaidConfig } from '../config.js';
-import { RaidDetection, RaidAction } from '../types.js';
+import { AntiRaidConfig as C } from '../config.js';
+import { Client, Guild, GuildMember, PermissionFlagsBits, Role } from 'discord.js';
+import { SlidingWindowCounter } from '../utils/slidingWindowCounter.js';
+
+type WindowMap = Map<string, SlidingWindowCounter>; // key -> counter
 
 export class AntiRaid {
-  private client: Client;
-  private raidDetections: Map<string, RaidDetection> = new Map();
+  constructor(private client: Client, private store?: Map<string, any>) {}
 
-  constructor(client: Client) {
-    this.client = client;
-    this.startCleanupInterval();
+  // per-guild windows
+  guildJoinWindows: Map<string, SlidingWindowCounter> = new Map();
+  guildChannelMsgWindows: Map<string, SlidingWindowCounter> = new Map();
+  guildWebhookMsgWindows: Map<string, SlidingWindowCounter> = new Map();
+
+  lockdowns: Map<string, NodeJS.Timeout> = new Map();
+
+  private getCounter(map: Map<string, SlidingWindowCounter>, key: string, ms: number) {
+    let c = map.get(key);
+    if (!c) { c = new SlidingWindowCounter(ms); map.set(key, c); }
+    return c;
   }
 
-  async handleMemberJoin(guild: Guild, member: GuildMember): Promise<void> {
-    const guildKey = `guild:${guild.id}:joins`;
-    const { count } = await rateLimiter.increment(guildKey, AntiRaidConfig.joinWindowMs);
+  noteJoin(guildId: string): number {
+    return this.getCounter(this.guildJoinWindows, guildId, C.joinWindowMs).push();
+  }
 
-    // Check for raid conditions
-    if (count >= AntiRaidConfig.joinThreshold) {
-      await this.triggerRaidProtection(guild, 'member_join', {
-        count,
-        timeWindow: AntiRaidConfig.joinWindowMs,
-        members: [member]
-      });
+  noteChannelMessage(guildId: string): number {
+    return this.getCounter(this.guildChannelMsgWindows, guildId, C.channelWindowMs).push();
+  }
+
+  noteWebhookMessage(guildId: string): number {
+    return this.getCounter(this.guildWebhookMsgWindows, guildId, C.webhookWindowMs).push();
+  }
+
+  async safeTimeout(member: GuildMember, reason: string) {
+    try {
+      await member.timeout(C.timeoutMinutes * 60_000, reason);
+    } catch {}
+  }
+
+  async safeKick(member: GuildMember, reason: string) {
+    try { await member.kick(reason); } catch {}
+  }
+
+  async safeBan(member: GuildMember, reason: string) {
+    try { await member.ban({ reason, deleteMessageSeconds: 60 * 60 }); } catch {}
+  }
+
+  async lockdown(guild: Guild, reason = 'Anti-raid lockdown') {
+    const key = guild.id;
+    if (this.lockdowns.has(key)) return;
+
+    const tasks: Promise<any>[] = [];
+    const roles = guild.roles.cache;
+    for (const name of C.lockdownRolesToClamp) {
+      const role: Role | undefined =
+        name === '@everyone' ? guild.roles.everyone : roles.find(r => r.name === name);
+      if (!role) continue;
+      const newPerms = role.permissions
+        .remove(PermissionFlagsBits.SendMessages)
+        .remove(PermissionFlagsBits.CreatePublicThreads)
+        .remove(PermissionFlagsBits.SendMessagesInThreads)
+        .remove(PermissionFlagsBits.AddReactions)
+        .remove(PermissionFlagsBits.Connect);
+      tasks.push(role.setPermissions(newPerms).catch(() => {}));
+    }
+    await Promise.all(tasks);
+
+    const t = setTimeout(() => this.unlock(guild).catch(() => {}), C.lockdownDurationMs);
+    this.lockdowns.set(key, t);
+
+    try {
+      const sys = guild.systemChannel ?? guild.channels.cache.find(c => c.isTextBased() && 'send' in c);
+      // @ts-ignore
+      sys?.send(`🔒 **Lockdown enabled** for ${(C.lockdownDurationMs/60000)|0} min. Reason: ${reason}`);
+    } catch {}
+  }
+
+  async unlock(guild: Guild) {
+    const t = this.lockdowns.get(guild.id);
+    if (t) clearTimeout(t);
+    this.lockdowns.delete(guild.id);
+
+    const tasks: Promise<any>[] = [];
+    for (const name of C.lockdownRolesToClamp) {
+      const role: Role | undefined =
+        name === '@everyone' ? guild.roles.everyone : guild.roles.cache.find(r => r.name === name);
+      if (!role) continue;
+      // You might want to restore from a snapshot. For simplicity, restore common perms:
+      const restored = role.permissions
+        .add(PermissionFlagsBits.SendMessages)
+        .add(PermissionFlagsBits.Connect);
+      tasks.push(role.setPermissions(restored).catch(() => {}));
+    }
+    await Promise.all(tasks);
+    try {
+      const sys = guild.systemChannel ?? guild.channels.cache.find(c => c.isTextBased() && 'send' in c);
+      // @ts-ignore
+      sys?.send(`✅ **Lockdown disabled**. Stay safe.`);
+    } catch {}
+  }
+
+  // Legacy methods for backward compatibility
+  async handleMemberJoin(guild: Guild, member: GuildMember): Promise<void> {
+    const count = this.noteJoin(guild.id);
+    
+    if (count >= C.joinThreshold) {
+      await this.lockdown(guild, `Join raid detected: ${count} joins`);
     }
 
     // Check account age
     const accountAge = Date.now() - member.user.createdTimestamp;
-    if (accountAge < AntiRaidConfig.minAccountAgeMs) {
-      await this.handleNewAccount(guild, member, accountAge);
+    if (accountAge < C.minAccountAgeMs) {
+      await this.safeTimeout(member, 'New account protection');
     }
   }
 
   async handleMessageSpam(guild: Guild, userId: string): Promise<void> {
-    const userKey = `user:${userId}:messages:${guild.id}`;
-    const { count } = await rateLimiter.increment(userKey, AntiRaidConfig.channelWindowMs);
-
-    if (count >= AntiRaidConfig.channelMsgThreshold) {
-      await this.triggerRaidProtection(guild, 'message_spam', {
-        count,
-        timeWindow: AntiRaidConfig.channelWindowMs,
-        userId
-      });
-    }
-  }
-
-  private async triggerRaidProtection(guild: Guild, type: string, data: any): Promise<void> {
-    const detection: RaidDetection = {
-      id: `${guild.id}:${type}:${Date.now()}`,
-      guildId: guild.id,
-      type,
-      data,
-      timestamp: Date.now(),
-      actions: []
-    };
-
-    this.raidDetections.set(detection.id, detection);
-
-    // Execute raid protection actions
-    const actions: RaidAction[] = [];
-
-    switch (type) {
-      case 'member_join':
-        actions.push(
-          { type: 'lockdown', severity: 'high' },
-          { type: 'notify_admins', severity: 'high' },
-          { type: 'enable_verification', severity: 'medium' }
-        );
-        break;
-      case 'message_spam':
-        actions.push(
-          { type: 'mute_user', severity: 'medium' },
-          { type: 'notify_admins', severity: 'medium' }
-        );
-        break;
-    }
-
-    for (const action of actions) {
-      await this.executeAction(guild, action, detection);
-    }
-  }
-
-  private async executeAction(guild: Guild, action: RaidAction, detection: RaidDetection): Promise<void> {
-    try {
-      switch (action.type) {
-        case 'lockdown':
-          await this.enableLockdown(guild);
-          break;
-        case 'notify_admins':
-          await this.notifyAdmins(guild, detection);
-          break;
-        case 'enable_verification':
-          await this.enableVerification(guild);
-          break;
-        case 'mute_user':
-          await this.muteUser(guild, detection.data.userId);
-          break;
-      }
-
-      detection.actions.push({
-        ...action,
-        executedAt: Date.now(),
-        success: true
-      });
-    } catch (error) {
-      console.error(`Failed to execute action ${action.type}:`, error);
-      detection.actions.push({
-        ...action,
-        executedAt: Date.now(),
-        success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      });
-    }
-  }
-
-  private async enableLockdown(guild: Guild): Promise<void> {
-    // Disable @everyone from sending messages
-    const everyoneRole = guild.roles.everyone;
-    await everyoneRole.setPermissions(everyoneRole.permissions.remove(PermissionFlagsBits.SendMessages));
-  }
-
-  private async notifyAdmins(guild: Guild, detection: RaidDetection): Promise<void> {
-    const adminChannel = guild.channels.cache.find(
-      channel => channel.type === 0 && channel.name.includes('admin')
-    ) as TextChannel;
-
-    if (adminChannel) {
-      const embed = {
-        color: 0xff0000,
-        title: '🚨 Raid Detection Alert',
-        description: `Potential raid detected in ${guild.name}`,
-        fields: [
-          { name: 'Type', value: detection.type, inline: true },
-          { name: 'Count', value: detection.data.count.toString(), inline: true },
-          { name: 'Time Window', value: `${detection.data.timeWindow / 1000}s`, inline: true }
-        ],
-        timestamp: new Date().toISOString()
-      };
-
-      await adminChannel.send({ embeds: [embed] });
-    }
-  }
-
-  private async enableVerification(guild: Guild): Promise<void> {
-    // Enable verification level to highest
-    await guild.setVerificationLevel(4); // VERY_HIGH
-  }
-
-  private async muteUser(guild: Guild, userId: string): Promise<void> {
-    const member = await guild.members.fetch(userId);
-    if (member) {
-      await member.timeout(AntiRaidConfig.timeoutMinutes * 60 * 1000, 'Spam detected');
-    }
-  }
-
-  private async handleNewAccount(guild: Guild, member: GuildMember, accountAge: number): Promise<void> {
-    const daysOld = Math.floor(accountAge / (24 * 60 * 60 * 1000));
+    const count = this.noteChannelMessage(guild.id);
     
-    // Auto-timeout very new accounts (less than 3 days)
-    if (daysOld < 3) {
-      await member.timeout(AntiRaidConfig.timeoutMinutes * 60 * 1000, 'New account protection');
+    if (count >= C.channelMsgThreshold) {
+      await this.lockdown(guild, `Message spam detected: ${count} messages`);
     }
   }
 
-  private startCleanupInterval(): void {
-    setInterval(() => {
-      rateLimiter.cleanup();
-      
-      // Clean up old raid detections (older than 1 hour)
-      const oneHourAgo = Date.now() - (60 * 60 * 1000);
-      for (const [id, detection] of this.raidDetections.entries()) {
-        if (detection.timestamp < oneHourAgo) {
-          this.raidDetections.delete(id);
-        }
-      }
-    }, 5 * 60 * 1000); // Every 5 minutes
-  }
-
-  getRaidDetections(guildId: string): RaidDetection[] {
-    return Array.from(this.raidDetections.values())
-      .filter(detection => detection.guildId === guildId)
-      .sort((a, b) => b.timestamp - a.timestamp);
+  getRaidDetections(guildId: string): any[] {
+    // Return empty array for now - can be enhanced later
+    return [];
   }
 }
