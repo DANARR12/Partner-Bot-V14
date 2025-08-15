@@ -20,7 +20,7 @@ const ms = require('ms');
 const { partner, link, idvc } = require('./config.json');
 
 client.once('ready', async () => {
-  console.log(`${client.user.tag} is now online!`);
+  console.log(client.user.tag);
   client.user.setActivity(`Wednesday`, { type: ActivityType.Watching });
 });
 
@@ -28,7 +28,10 @@ client.once('ready', async () => {
 client.on("messageCreate", (message) => {
   if (message.author.bot) return;
 
-  if (message.content === "Reklam" || message.content === "reklam") {
+  if (message.content === "Reklam") {
+    message.reply(`رێکلام لە تایبەت بۆم بنێرە`);
+  }
+  if (message.content === "reklam") {
     message.reply(`رێکلام لە تایبەت بۆم بنێرە`);
   }
 });
@@ -85,27 +88,29 @@ client.on('messageCreate', async (message) => {
     return;
   }
 
-  const cooldownTime = Date.now() + ms('60m');
+  const time = Date.now() + ms('60m');
   
   try {
     const invite = await client.fetchInvite(args[0]);
     
     // Set cooldown
-    await db.set(`cool_${message.author.id}`, cooldownTime);
+    await db.set(`cool_${message.author.id}`, time);
     
     // Post advertisement
     await share.send({ 
-      content: `${invite}\n**📨 Posted By** ${message.author}` 
+      content: `${invite}\n **📨 Posted By** ${message.author}` 
     });
     
     // Confirm to user
     try {
       await message.channel.send({ 
-        content: `> 📪 **Posted In ${share}**\n> 📮 **Post This Link in Your Server To** ${link}` 
+        content: `
+> 📪 **Posted In ${share}**
+> 📮 **Post This Link in Your Server To** ${link}` 
       });
     } catch (err) {
       await message.channel.send({ 
-        content: `> **${message.author} Your Server Posted in ${share}**` 
+        content: `> **${message.author} You Server Posted in ${share}**` 
       });
     }
     
@@ -113,7 +118,7 @@ client.on('messageCreate', async (message) => {
     console.error('Invalid invite error:', err);
     try {
       await message.channel.send({ 
-        content: '> **:x: | Invalid Link Try Again!**' 
+        content: '> **:x: |  Invalid Link Try Again!**' 
       });
     } catch (error) {
       console.error('Failed to send invalid link message:', error);
@@ -126,15 +131,15 @@ client.on("ready", async () => {
   try {
     const { joinVoiceChannel } = require('@discordjs/voice');
     
-    const channel = await client.channels.fetch(idvc);
+    const channel = await client.channels.fetch(`${idvc}`);
     if (!channel) {
       console.error('Voice channel not found!');
       return;
     }
     
-    console.log(`${client.user.tag} Connected To Voice Channel`);
+    console.log(`${client.user.tag} Connected To Voice`);
     
-    const voiceConnection = joinVoiceChannel({
+    const VoiceConnection = joinVoiceChannel({
       channelId: channel.id,
       guildId: channel.guild.id,
       adapterCreator: channel.guild.voiceAdapterCreator,
