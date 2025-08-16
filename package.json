@@ -1,34 +1,28 @@
 {
-  "name": "discord-advertisement-bot",
+  "name": "anti-raid-bot",
   "version": "1.0.0",
-  "description": "A Discord bot for managing server advertisements with cooldown system",
+  "description": "Discord anti-raid protection bot",
   "main": "index.js",
+  "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
-    "forever": "forever start index.js",
-    "forever:stop": "forever stop index.js",
-    "forever:restart": "forever restart index.js",
-    "forever:list": "forever list"
+    "dev": "ts-node src/index.ts",
+    "start": "node --enable-source-maps dist/index.js",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [
-    "discord",
-    "bot",
-    "advertisement",
-    "discord.js"
-  ],
+  "keywords": ["discord", "bot", "anti-raid", "protection"],
+  "author": "",
+  "license": "ISC",
+  "packageManager": "pnpm@10.11.1",
   "dependencies": {
-    "discord.js": "^14.14.1",
-    "@discordjs/voice": "^0.16.1",
-    "multiple.db": "^0.0.3",
-    "ms": "^2.1.3"
+    "discord.js": "14.21.0",
+    "ioredis": "5.7.0",
+    "zod": "4.0.17"
   },
   "devDependencies": {
-    "nodemon": "^3.0.2"
-  },
-  "engines": {
-    "node": ">=16.9.0"
-  },
-  "author": "",
-  "license": "MIT"
+    "@types/node": "24.3.0",
+    "dotenv": "17.2.1",
+    "ts-node": "10.9.2",
+    "typescript": "5.9.2"
+  }
 }
