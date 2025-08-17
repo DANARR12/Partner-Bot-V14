@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}چوونەژوورەوە - سیستەمی چوونەژوورەوە{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>چوونەژوورەوە</h2>
+            <p>تکایە زانیارییەکانت بنووسە</p>
+        </div>
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="username">ناوی بەکارهێنەر</label>
+                <input type="text" id="username" name="username" required 
+                       placeholder="ناوی بەکارهێنەرەکەت بنووسە">
+            </div>
+
+            <div class="form-group">
+                <label for="password">پاسۆرد</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="پاسۆردەکەت بنووسە">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">چوونەژوورەوە</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>هەتەکاونت نییە؟ <a href="{{ url_for('register') }}">تۆمارکردن</a></p>
+        </div>
+    </div>
+</div>
+{% endblock %}

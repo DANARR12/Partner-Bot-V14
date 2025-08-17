@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}تۆمارکردن - سیستەمی چوونەژوورەوە{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        <div class="auth-header">
+            <h2>تۆمارکردن</h2>
+            <p>تکایە زانیارییەکانت بنووسە</p>
+        </div>
+
+        <form method="POST" class="auth-form">
+            <div class="form-group">
+                <label for="username">ناوی بەکارهێنەر</label>
+                <input type="text" id="username" name="username" required 
+                       placeholder="ناوی بەکارهێنەرەکەت بنووسە">
+            </div>
+
+            <div class="form-group">
+                <label for="email">ئیمەیڵ (ئارەزوومەندانە)</label>
+                <input type="email" id="email" name="email" 
+                       placeholder="ئیمەیڵەکەت بنووسە">
+            </div>
+
+            <div class="form-group">
+                <label for="password">پاسۆرد</label>
+                <input type="password" id="password" name="password" required 
+                       placeholder="پاسۆردەکەت بنووسە (لانیکەم ٦ پیت)">
+                <small>پاسۆرد دەبێت لانیکەم ٦ پیت بێت</small>
+            </div>
+
+            <div class="form-group">
+                <label for="confirm_password">دووبارەکردنەوەی پاسۆرد</label>
+                <input type="password" id="confirm_password" name="confirm_password" required 
+                       placeholder="پاسۆردەکەت دووبارە بکەرەوە">
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-full">تۆمارکردن</button>
+        </form>
+
+        <div class="auth-footer">
+            <p>هەتەکاونت هەیە؟ <a href="{{ url_for('login') }}">چوونەژوورەوە</a></p>
+        </div>
+    </div>
+</div>
+
+<script>
+// Password confirmation validation
+document.getElementById('confirm_password').addEventListener('input', function() {
+    const password = document.getElementById('password').value;
+    const confirmPassword = this.value;
+    
+    if (password !== confirmPassword) {
+        this.setCustomValidity('پاسۆردەکان وەک یەک نین');
+    } else {
+        this.setCustomValidity('');
+    }
+});
+
+document.getElementById('password').addEventListener('input', function() {
+    const confirmPassword = document.getElementById('confirm_password');
+    if (confirmPassword.value) {
+        if (this.value !== confirmPassword.value) {
+            confirmPassword.setCustomValidity('پاسۆردەکان وەک یەک نین');
+        } else {
+            confirmPassword.setCustomValidity('');
+        }
+    }
+});
+</script>
+{% endblock %}

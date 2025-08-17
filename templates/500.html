@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}500 - هەڵەی سێرڤەر{% endblock %}
+
+{% block content %}
+<div class="error-page">
+    <div class="error-content">
+        <div class="error-icon">500</div>
+        <h1>هەڵەی سێرڤەر</h1>
+        <p>هەڵەیەک ڕوویدا لە سێرڤەرەکەدا. تکایە دواتر هەوڵ بدە.</p>
+        <div class="error-actions">
+            <a href="{{ url_for('home') }}" class="btn btn-primary">گەڕانەوە بۆ سەرەتا</a>
+            <button onclick="location.reload()" class="btn btn-secondary">دووبارەکردنەوە</button>
+        </div>
+    </div>
+</div>
+
+<style>
+.error-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 60vh;
+    text-align: center;
+}
+
+.error-content {
+    max-width: 500px;
+}
+
+.error-icon {
+    font-size: 6rem;
+    font-weight: 700;
+    color: var(--danger);
+    margin-bottom: 1rem;
+}
+
+.error-content h1 {
+    color: var(--brand);
+    margin-bottom: 1rem;
+    font-weight: 700;
+}
+
+.error-content p {
+    color: var(--muted);
+    margin-bottom: 2rem;
+    font-size: 1.1rem;
+}
+
+.error-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+
+{% block title %}پڕۆفایل - سیستەمی چوونەژوورەوە{% endblock %}
+
+{% block content %}
+<div class="profile">
+    <div class="profile-header">
+        <h1>پڕۆفایل</h1>
+        <p>زانیارییەکانی هەتەکاونت</p>
+    </div>
+
+    <div class="profile-grid">
+        <div class="profile-card">
+            <div class="card-header">
+                <h3>زانیارییەکانی بەکارهێنەر</h3>
+            </div>
+            <div class="card-content">
+                <div class="info-item">
+                    <span class="label">ناوی بەکارهێنەر:</span>
+                    <span class="value">{{ user.username }}</span>
+                </div>
+                {% if user.email %}
+                <div class="info-item">
+                    <span class="label">ئیمەیڵ:</span>
+                    <span class="value">{{ user.email }}</span>
+                </div>
+                {% else %}
+                <div class="info-item">
+                    <span class="label">ئیمەیڵ:</span>
+                    <span class="value text-muted">نەنووسراوە</span>
+                </div>
+                {% endif %}
+                <div class="info-item">
+                    <span class="label">بەرواری دروستکردن:</span>
+                    <span class="value">{{ user.created_at.split(' ')[0] if user.created_at else 'نەزانراو' }}</span>
+                </div>
+                {% if user.last_login %}
+                <div class="info-item">
+                    <span class="label">دوایین چوونەژوورەوە:</span>
+                    <span class="value">{{ user.last_login.split(' ')[0] if user.last_login else 'نەزانراو' }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <div class="card-header">
+                <h3>کردارەکان</h3>
+            </div>
+            <div class="card-content">
+                <div class="action-buttons">
+                    <a href="{{ url_for('change_password') }}" class="btn btn-primary">گۆڕینی پاسۆرد</a>
+                    <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">گەڕانەوە بۆ داشبۆرد</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-card">
+            <div class="card-header">
+                <h3>ئەمانەت</h3>
+            </div>
+            <div class="card-content">
+                <div class="security-info">
+                    <div class="security-item">
+                        <span class="security-icon">🔐</span>
+                        <div class="security-text">
+                            <h4>پاسۆرد</h4>
+                            <p>پاسۆردەکەت بە شێوەیەکی پارێزراو هەش کراوە</p>
+                        </div>
+                    </div>
+                    <div class="security-item">
+                        <span class="security-icon">🛡️</span>
+                        <div class="security-text">
+                            <h4>پارێزراو</h4>
+                            <p>هەموو زانیارییەکانت پارێزراون</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
