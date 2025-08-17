@@ -1,169 +1,214 @@
-# Discord Advertisement Bot
+# Glow Beauty - Cosmetics Shopping Website
 
-A Discord bot that manages server advertisements with a cooldown system. Users can submit Discord server invites via DM, and the bot will post them to a designated channel with proper cooldown management.
+A modern, responsive e-commerce website for cosmetics and beauty products built with React, TypeScript, and Material-UI.
 
-## Features
+## 🌟 Features
 
-- 📨 Advertisement submission via Direct Messages
-- ⏰ 60-minute cooldown system per user
-- 🔊 Automatic voice channel connection
-- 🌐 Multilingual support (Kurdish/English)
-- 🛡️ Invite link validation
-- 📊 Database storage for cooldowns
-- 🔄 Graceful error handling
+### 🛍️ Shopping Experience
+- **Product Catalog**: Browse through skincare, makeup, haircare, and fragrances
+- **Advanced Filtering**: Filter by category, price range, and search functionality
+- **Product Details**: Comprehensive product information with ingredients, benefits, and reviews
+- **Shopping Cart**: Add items, manage quantities, and apply coupon codes
+- **Responsive Design**: Optimized for desktop, tablet, and mobile devices
 
-## Setup
+### 🎨 Design & UX
+- **Modern UI**: Beautiful pink-themed design with Material-UI components
+- **Smooth Animations**: Hover effects and transitions for enhanced user experience
+- **Category Navigation**: Easy browsing by product categories
+- **Product Ratings**: Star ratings and review counts for informed decisions
+- **Promotional Features**: Special offers and discount codes
+
+### 📱 Responsive Features
+- **Mobile-First**: Optimized for all screen sizes
+- **Touch-Friendly**: Easy navigation on mobile devices
+- **Collapsible Filters**: Mobile-optimized filtering system
+- **Sticky Navigation**: Always accessible header and cart
+
+## 🚀 Getting Started
 
 ### Prerequisites
-
-- Node.js 16.9.0 or higher
-- A Discord application/bot token
-- Discord server with appropriate permissions
+- Node.js (version 16 or higher)
+- npm or yarn package manager
 
 ### Installation
 
-1. Clone or download this repository
-2. Install dependencies:
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd cosmetics-shop
+   ```
+
+2. **Install dependencies**
    ```bash
    npm install
    ```
 
-3. Create configuration file:
-   ```bash
-   cp config.json.example config.json
-   ```
-
-4. Edit `config.json` with your settings:
-   ```json
-   {
-       "partner": "PARTNER_CHANNEL_ID_HERE",
-       "link": "YOUR_PROMOTIONAL_LINK_HERE", 
-       "idvc": "VOICE_CHANNEL_ID_HERE"
-   }
-   ```
-
-5. Set up environment variables:
-   ```bash
-   # Linux/Mac
-   export DISCORD_TOKEN="your_discord_bot_token_here"
-   
-   # Windows
-   set DISCORD_TOKEN=your_discord_bot_token_here
-   ```
-
-6. Run the bot:
+3. **Start the development server**
    ```bash
    npm start
    ```
 
-### Configuration
+4. **Open your browser**
+   Navigate to `http://localhost:3000` to view the website
 
-#### config.json Parameters
+### Available Scripts
 
-- `partner` - Channel ID where advertisements will be posted
-- `link` - Optional promotional link to include in confirmation messages
-- `idvc` - Voice channel ID for the bot to join (optional)
+- `npm start` - Runs the app in development mode
+- `npm run build` - Builds the app for production
+- `npm test` - Launches the test runner
+- `npm run eject` - Ejects from Create React App (not recommended)
 
-#### Environment Variables
-
-- `DISCORD_TOKEN` - Your Discord bot token (required)
-
-### Discord Bot Setup
-
-1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a new application
-3. Go to "Bot" section and create a bot
-4. Copy the bot token and set it as `DISCORD_TOKEN` environment variable
-5. Under "Privileged Gateway Intents", enable:
-   - Message Content Intent
-   - Server Members Intent
-6. Invite the bot to your server with these permissions:
-   - Send Messages
-   - Read Message History
-   - Connect (for voice)
-   - Use Voice Activity
-
-## Usage
-
-### For Users
-
-1. **Request Advertisement**: Type `reklam` or `Reklam` in any channel
-2. **Submit Advertisement**: Send a Discord invite link via DM to the bot
-3. **Cooldown**: Wait 60 minutes between submissions
-
-### Bot Responses
-
-- **Kurdish**: `رێکلام لە تایبەت بۆم بنێرە` (Send advertisement privately to me)
-- **English**: `DM Me For Ads`
-
-### Commands
-
-- `reklam` / `Reklam` - Get instructions for advertisement submission
-- `@Bot` - Get advertisement submission instructions
-- Send invite link in DM - Submit advertisement
-
-## File Structure
+## 📁 Project Structure
 
 ```
-├── index.js              # Main bot file
-├── config.json          # Bot configuration
-├── config.json.example  # Configuration template
-├── package.json         # Dependencies and scripts
-├── README.md           # This file
-└── database.json       # Auto-generated database file
+src/
+├── components/          # Reusable UI components
+│   ├── Header.tsx      # Navigation header with cart
+│   └── Footer.tsx      # Footer with links and info
+├── pages/              # Main page components
+│   ├── Home.tsx        # Landing page with hero and featured products
+│   ├── Products.tsx    # Product catalog with filtering
+│   ├── ProductDetail.tsx # Individual product page
+│   └── Cart.tsx        # Shopping cart and checkout
+├── data/               # Static data and utilities
+│   └── products.ts     # Product data and helper functions
+└── App.tsx             # Main app component with routing
 ```
 
-## Database
+## 🛍️ Product Categories
 
-The bot uses `multiple.db` with JSON storage. Cooldown data is automatically stored in `database.json`.
+### Skincare
+- Face serums and treatments
+- Cleansers and toners
+- Anti-aging products
+- Moisturizers and creams
 
-## Error Handling
+### Makeup
+- Foundations and concealers
+- Lipsticks and lip products
+- Mascaras and eye makeup
+- Makeup tools and accessories
 
-- Invalid invite links are rejected with user feedback
-- Missing configuration shows helpful error messages
-- Voice channel connection failures are logged but don't stop the bot
-- Network errors are caught and logged
+### Hair Care
+- Shampoos and conditioners
+- Hair masks and treatments
+- Styling products
+- Heat protectants
 
-## Development
+### Fragrances
+- Perfumes and colognes
+- Body mists
+- Gift sets
+- Travel sizes
 
-### Scripts
+## 🎨 Design System
 
-- `npm start` - Run the bot
-- `npm run dev` - Run with nodemon for development
+### Color Palette
+- **Primary**: Pink (#ff69b4) - Main brand color
+- **Secondary**: Light Pink (#f8bbd9) - Accent color
+- **Background**: Light Pink (#fff5f8) - Page background
+- **Text**: Dark Gray (#2c2c2c) - Primary text
 
-### Adding Features
+### Typography
+- **Font Family**: Poppins (Google Fonts)
+- **Weights**: 300, 400, 500, 600, 700
+- **Responsive**: Scales appropriately across devices
 
-The code is modular with separate functions for:
-- `handlePublicMessage()` - Public channel interactions
-- `handleDirectMessage()` - Advertisement submission handling
-- `connectToVoiceChannel()` - Voice channel management
+### Components
+- **Material-UI**: Consistent component library
+- **Custom Styling**: Brand-specific modifications
+- **Responsive Grid**: Flexible layout system
 
-## Troubleshooting
+## 🔧 Customization
 
-### Common Issues
+### Adding New Products
+1. Edit `src/data/products.ts`
+2. Add new product objects following the Product interface
+3. Include all required fields: id, name, brand, category, price, etc.
 
-1. **Bot not responding**
-   - Check if bot token is correct
-   - Verify bot has necessary permissions
-   - Check if config.json exists and is valid
+### Modifying Categories
+1. Update the `categories` array in `src/data/products.ts`
+2. Add new category objects with id, name, and icon
 
-2. **Voice connection fails**
-   - Ensure bot has Connect permission
-   - Verify voice channel ID is correct
-   - Check if channel exists
+### Styling Changes
+1. Modify the theme in `src/App.tsx`
+2. Update component styles using Material-UI's sx prop
+3. Customize colors, typography, and spacing
 
-3. **Database errors**
-   - Ensure write permissions in bot directory
-   - Check if multiple.db is properly installed
+## 📱 Mobile Optimization
 
-### Support
+### Responsive Breakpoints
+- **xs**: 0px - 599px (Mobile)
+- **sm**: 600px - 899px (Tablet)
+- **md**: 900px - 1199px (Small Desktop)
+- **lg**: 1200px+ (Large Desktop)
 
-If you encounter issues:
-1. Check the console for error messages
-2. Verify all configuration values
-3. Ensure all dependencies are installed
-4. Check Discord permissions
+### Mobile Features
+- Collapsible navigation menu
+- Touch-friendly buttons and interactions
+- Optimized product grid layouts
+- Mobile-first filtering system
 
-## License
+## 🚀 Deployment
 
-This project is licensed under the MIT License.
+### Build for Production
+```bash
+npm run build
+```
+
+### Deploy Options
+- **Netlify**: Drag and drop the `build` folder
+- **Vercel**: Connect your GitHub repository
+- **AWS S3**: Upload build files to S3 bucket
+- **Heroku**: Deploy using Heroku CLI
+
+## 🔮 Future Enhancements
+
+### Planned Features
+- User authentication and accounts
+- Wishlist functionality
+- Product reviews and ratings
+- Advanced search with filters
+- Payment gateway integration
+- Order tracking
+- Email notifications
+- Admin dashboard
+
+### Technical Improvements
+- State management with Redux or Context API
+- API integration for dynamic data
+- Image optimization and lazy loading
+- Performance optimizations
+- SEO improvements
+- PWA capabilities
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## 🙏 Acknowledgments
+
+- **Material-UI**: Component library and design system
+- **React**: Frontend framework
+- **TypeScript**: Type safety and developer experience
+- **Unsplash**: Product images
+- **Google Fonts**: Typography
+
+## 📞 Support
+
+For support and questions:
+- Email: support@glowbeauty.com
+- Phone: +1 (555) 123-4567
+- Website: www.glowbeauty.com
+
+---
+
+**Glow Beauty** - Discover your natural beauty with premium cosmetics and skincare products. ✨
