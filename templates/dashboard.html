@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+
+{% block title %}داشبۆرد - سیستەمی چوونەژوورەوە{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <div class="dashboard-header">
+        <h1>بەخێربێیت، {{ user.username }}!</h1>
+        <p>بەخێربێیت بۆ داشبۆردەکەت</p>
+    </div>
+
+    <div class="dashboard-grid">
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>زانیارییەکانی بەکارهێنەر</h3>
+            </div>
+            <div class="card-content">
+                <div class="info-item">
+                    <span class="label">ناوی بەکارهێنەر:</span>
+                    <span class="value">{{ user.username }}</span>
+                </div>
+                {% if user.email %}
+                <div class="info-item">
+                    <span class="label">ئیمەیڵ:</span>
+                    <span class="value">{{ user.email }}</span>
+                </div>
+                {% endif %}
+                <div class="info-item">
+                    <span class="label">بەرواری دروستکردن:</span>
+                    <span class="value">{{ user.created_at.split(' ')[0] if user.created_at else 'نەزانراو' }}</span>
+                </div>
+                {% if user.last_login %}
+                <div class="info-item">
+                    <span class="label">دوایین چوونەژوورەوە:</span>
+                    <span class="value">{{ user.last_login.split(' ')[0] if user.last_login else 'نەزانراو' }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>کردارەکان</h3>
+            </div>
+            <div class="card-content">
+                <div class="action-buttons">
+                    <a href="{{ url_for('profile') }}" class="btn btn-secondary">بینینی پڕۆفایل</a>
+                    <a href="{{ url_for('change_password') }}" class="btn btn-secondary">گۆڕینی پاسۆرد</a>
+                    <a href="{{ url_for('logout') }}" class="btn btn-danger">چوونەدەرەوە</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="dashboard-card">
+            <div class="card-header">
+                <h3>ستاتستیکەکان</h3>
+            </div>
+            <div class="card-content">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">1</div>
+                        <div class="stat-label">هەتەکاونت</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">{{ user.id }}</div>
+                        <div class="stat-label">ناسنامە</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

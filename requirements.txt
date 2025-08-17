@@ -1,5 +1,3 @@
-# Python Dependencies for Discord Bots
-discord.py>=2.3.0
-python-dotenv>=1.0.0
-
-# Note: For Node.js Discord Partner Bot, run: npm install
+Flask==2.3.3
+Werkzeug==2.3.7
+pyOpenSSL==23.3.0

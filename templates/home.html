@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+
+{% block title %}سەرەتا - سیستەمی چوونەژوورەوە{% endblock %}
+
+{% block content %}
+<div class="hero">
+    <div class="hero-content">
+        <h1>بەخێربێیت بۆ سیستەمی چوونەژوورەوە</h1>
+        <p>سیستەمێکی پارێزراو و ئاسان بۆ بەڕێوەبردنی بەکارهێنەرەکان</p>
+        
+        <div class="hero-buttons">
+            {% if session.user_id %}
+                <a href="{{ url_for('dashboard') }}" class="btn btn-primary">بڕۆ بۆ داشبۆرد</a>
+            {% else %}
+                <a href="{{ url_for('login') }}" class="btn btn-primary">چوونەژوورەوە</a>
+                <a href="{{ url_for('register') }}" class="btn btn-secondary">تۆمارکردن</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<div class="features">
+    <div class="feature-grid">
+        <div class="feature-card">
+            <div class="feature-icon">🔐</div>
+            <h3>پارێزراو</h3>
+            <p>پاسۆردەکان بە شێوەیەکی پارێزراو هەش دەکرێن</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">⚡</div>
+            <h3>خێرا</h3>
+            <p>سیستەمێکی خێرا و کارا</p>
+        </div>
+        
+        <div class="feature-card">
+            <div class="feature-icon">📱</div>
+            <h3>ڕیسپۆنسڤ</h3>
+            <p>لەگەڵ هەموو ئامێرەکان کار دەکات</p>
+        </div>
+    </div>
+</div>
+{% endblock %}
