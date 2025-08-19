@@ -18,10 +18,11 @@
     "discord.js"
   ],
   "dependencies": {
-    "discord.js": "^14.14.1",
     "@discordjs/voice": "^0.16.1",
-    "multiple.db": "^0.0.3",
-    "ms": "^2.1.3"
+    "discord.js": "^14.14.1",
+    "dotenv": "^17.2.1",
+    "ms": "^2.1.3",
+    "multiple.db": "^0.0.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
