@@ -129,13 +129,19 @@ async function handleDirectMessage(message) {
     
     if (cooldown && cooldown > Date.now()) {
         const timeLeft = Math.ceil((cooldown - Date.now()) / 1000 / 60);
-        return message.channel.send({
-            content: `ببورن ئەتوانن دووبارە ڕیکلامەکەت بنێرن دوای ${timeLeft} خولەک`
-        }).catch(() => {
-            message.channel.send({
-                content: `${message.author} Sorry, you can send your advertisement again after ${timeLeft} minutes.`
+        try {
+            return await message.author.send({
+                content: 'ببورن ئەتوانن دووبارە ڕیکلامەکەت بنێرن دوای 5خولەک'
             });
-        });
+        } catch (err) {
+            try {
+                return await message.channel.send({
+                    content: `${message.author} Sorry You Can Send Your Advertisement Again After ${timeLeft}m`
+                });
+            } catch (error) {
+                console.error('Failed to send cooldown message:', error);
+            }
+        }
     }
     
     try {
@@ -148,26 +154,29 @@ async function handleDirectMessage(message) {
         
         // Post advertisement
         await shareChannel.send({
-            content: `${invite}\n**📨 Posted By** ${message.author}`
+            content: `${invite}\n **📨 Posted By** ${message.author}`
         });
         
         // Confirm to user
-        const confirmMessage = link 
-            ? `> 📪 **Posted In ${shareChannel}**\n> 📮 **Post This Link in Your Server To** ${link}`
-            : `> 📪 **Your advertisement has been posted in ${shareChannel}**`;
-            
-        await message.channel.send({ content: confirmMessage })
-            .catch(() => {
-                message.channel.send({
-                    content: `> **${message.author} Your server has been posted in ${shareChannel}**`
-                });
+        try {
+            await message.channel.send({
+                content: `> 📪 **Posted In ${shareChannel}**\n> 📮 **Post This Link in Your Server To** ${link}`
             });
-            
+        } catch (err) {
+            await message.channel.send({
+                content: `> **${message.author} You Server Posted in ${shareChannel}**`
+            });
+        }
+        
     } catch (error) {
-        console.error('Invite validation error:', error.message);
-        await message.channel.send({
-            content: '> **❌ | Invalid invite link! Please try again.**'
-        });
+        console.error('Invalid invite error:', error);
+        try {
+            await message.channel.send({
+                content: '> **:x: |  Invalid Link Try Again!**'
+            });
+        } catch (error) {
+            console.error('Failed to send invalid link message:', error);
+        }
     }
 }
 
