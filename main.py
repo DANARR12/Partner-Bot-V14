@@ -136,11 +136,11 @@ class AIConfig:
                 " bersiv bi سۆرانی bide. Heger peywenda heman dizî be, di heman zimanê bikarhêner de binivîse."
             ),
             "kurmanji": "Hemû bersivên xwe tenê bi Kurmancî bide, bi rêz û zimanê xwerû.",
-            "sorani": "هەموو وەڵامەکانت تەنها بە کوردیی سۆرانی بنوسە بە ڕێزمانی خۆی.",
+            "sorani": "هەموو وەڵامەکانت تەنها بە کوردی سۆرانی بنوسە. هەرگیز زمانێکی تر بەکار مەهێنە.",
         }[self.dialect]
         base = (
-            "Tu rola yekemê deta AI-ya piştgirîya Discord î. Bixweber, kurt û rehendî binivîse."
-            " Pêşî ewle bibe ku peyamên te asayî û bi rêz in."
+            "تۆ یاریدەدەری AI ی دیسکۆردیت. وەڵامەکانت کورت و بەسوود بن."
+            " دڵنیابە لەوەی پەیامەکانت گونجاو و بە ڕێزن."
         )
         return f"{base}\n\n{dialect_note}"
 
