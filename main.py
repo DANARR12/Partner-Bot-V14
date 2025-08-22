@@ -32,6 +32,7 @@ import re
 import signal
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional, Tuple
+from pathlib import Path
 
 import aiosqlite
 import discord
@@ -206,12 +207,45 @@ class AI:
         except Exception as e:
             raise AIError(str(e))
 
+# -------------------- Voice Processing (TTS/STT) --------------------
+
+async def tts_kurdish(text: str, filename: str = "tts.mp3") -> str:
+    """Generate Kurdish TTS audio file"""
+    try:
+        response = await ai.client.audio.speech.create(
+            model="tts-1",  # Using correct OpenAI TTS model
+            voice="alloy",  # Available voices: alloy, echo, fable, onyx, nova, shimmer
+            input=text
+        )
+        
+        file_path = f"downloads/{filename}"
+        with open(file_path, "wb") as f:
+            f.write(response.content)
+        return file_path
+    except Exception as e:
+        log.exception("TTS generation failed: %s", e)
+        raise
+
+async def stt_kurdish(file_path: str) -> str:
+    """Transcribe Kurdish audio to text"""
+    try:
+        with open(file_path, "rb") as audio_file:
+            transcript = await ai.client.audio.transcriptions.create(
+                model="whisper-1",  # Using correct OpenAI Whisper model
+                file=audio_file,
+                language="ku"  # Kurdish language code
+            )
+        return transcript.text
+    except Exception as e:
+        log.exception("STT transcription failed: %s", e)
+        raise
+
 # -------------------- UI Components --------------------
 
 class KurdishView(View):
-    def __init__(self):
+    def __init__(self, message_content: str = ""):
         super().__init__(timeout=None)
-        self.add_item(Button(label="Translate ↔", style=discord.ButtonStyle.primary, custom_id="translate"))
+        self.message_content = message_content
     
     @discord.ui.button(label="🔄 Kurmancî", style=discord.ButtonStyle.secondary, custom_id="to_kurmanji")
     async def to_kurmanji(self, interaction: discord.Interaction, button: Button):
@@ -254,11 +288,62 @@ class KurdishView(View):
             except Exception as e:
                 log.exception("Sorani translation failed: %s", e)
                 await interaction.followup.send("❌ وەرگێڕان سەرکەوتوو نەبوو.", ephemeral=True)
+    
+    @discord.ui.button(label="🔊 Speak", style=discord.ButtonStyle.success, custom_id="speak_message")
+    async def speak_message(self, interaction: discord.Interaction, button: Button):
+        await interaction.response.defer(ephemeral=True)
+        
+        # Check if user is in voice channel
+        if not interaction.user.voice or not interaction.user.voice.channel:
+            await interaction.followup.send("⚠️ تکایە یەکەم جار بچۆرە ناو کەناڵی دەنگەوە.", ephemeral=True)
+            return
+        
+        # Get the message content
+        content = self.message_content or interaction.message.content
+        if not content:
+            await interaction.followup.send("⚠️ پەیامێک نەدۆزرایەوە بۆ قسەکردن.", ephemeral=True)
+            return
+        
+        try:
+            # Connect to voice channel if not already connected
+            voice_client = interaction.guild.voice_client
+            if not voice_client:
+                voice_client = await interaction.user.voice.channel.connect()
+            
+            # Generate TTS
+            import time
+            filename = f"tts_{int(time.time())}.mp3"
+            audio_path = await tts_kurdish(content, filename)
+            
+            # Play audio
+            if voice_client.is_playing():
+                voice_client.stop()
+            
+            source = discord.FFmpegPCMAudio(audio_path)
+            voice_client.play(source)
+            
+            await interaction.followup.send(f"🗣️ دەنگی کرد: {content[:100]}{'...' if len(content) > 100 else ''}", ephemeral=True)
+            
+            # Clean up audio file after playing
+            def cleanup(error):
+                if error:
+                    log.error(f"Audio playback error: {error}")
+                try:
+                    os.remove(audio_path)
+                except:
+                    pass
+            
+            source.cleanup = cleanup
+            
+        except Exception as e:
+            log.exception("TTS playback failed: %s", e)
+            await interaction.followup.send("❌ دەنگکردن سەرکەوتوو نەبوو.", ephemeral=True)
 
 # -------------------- Discord Bot --------------------
 
 intents = discord.Intents.default()
 intents.message_content = True  # needed for prefix and context menu
+intents.voice_states = True     # needed for voice channel functionality
 
 bot = commands.Bot(command_prefix="!", intents=intents)
 ai = AI(api_key=OPENAI_API_KEY, cfg=AIConfig(model=OPENAI_MODEL, dialect=KURDISH_DIALECT))
@@ -266,6 +351,9 @@ ai = AI(api_key=OPENAI_API_KEY, cfg=AIConfig(model=OPENAI_MODEL, dialect=KURDISH
 # Simple in-process semaphore to throttle concurrent OpenAI calls
 OPENAI_CONCURRENCY = int(os.getenv("OPENAI_CONCURRENCY", "3"))
 openai_sema = asyncio.Semaphore(OPENAI_CONCURRENCY)
+
+# Create downloads directory for voice messages
+Path("downloads").mkdir(exist_ok=True)
 
 # -------------------- Utilities --------------------
 
@@ -306,6 +394,87 @@ async def on_ready():
         log.exception("Slash sync failed: %s", e)
     log.info("Logged in as %s", bot.user)
 
+@bot.event
+async def on_message(message):
+    # Skip bot messages
+    if message.author.bot:
+        await bot.process_commands(message)
+        return
+    
+    # Process voice message attachments
+    if message.attachments:
+        for attachment in message.attachments:
+            # Check if it's an audio file
+            if attachment.filename.lower().endswith(('.mp3', '.wav', '.m4a', '.ogg', '.webm', '.mp4')):
+                try:
+                    # Download the audio file
+                    file_path = f"downloads/{attachment.filename}"
+                    await attachment.save(file_path)
+                    
+                    # Transcribe the audio
+                    async with message.channel.typing():
+                        transcribed_text = await stt_kurdish(file_path)
+                    
+                    if transcribed_text.strip():
+                        # Send transcription with translation buttons
+                        view = KurdishView(message_content=transcribed_text)
+                        embed = discord.Embed(
+                            title="📝 Kurdish Voice Transcription",
+                            description=transcribed_text,
+                            color=discord.Color.blue()
+                        )
+                        embed.set_footer(text=f"From: {message.author.display_name}")
+                        
+                        await message.reply(embed=embed, view=view)
+                        
+                        # Optionally process as chat if it looks like a question/command
+                        if any(word in transcribed_text.lower() for word in ['?', 'چی', 'چۆن', 'کێ', 'کوا', 'کەی', 'بۆچی']):
+                            try:
+                                # Get AI response to the transcribed voice message
+                                hist = await get_history(
+                                    message.guild.id if message.guild else 0, 
+                                    message.channel.id, 
+                                    message.author.id
+                                )
+                                reply = await ai.chat(hist, transcribed_text)
+                                
+                                # Save to history
+                                hist.append({"role": "user", "content": transcribed_text})
+                                hist.append({"role": "assistant", "content": reply})
+                                await save_history(
+                                    message.guild.id if message.guild else 0, 
+                                    message.channel.id, 
+                                    message.author.id, 
+                                    hist
+                                )
+                                
+                                # Send AI response with voice and translation buttons
+                                ai_view = KurdishView(message_content=reply)
+                                ai_embed = discord.Embed(
+                                    title="🤖 Kurdish AI Response",
+                                    description=as_discord_safe(reply),
+                                    color=discord.Color.green()
+                                )
+                                await message.channel.send(embed=ai_embed, view=ai_view)
+                                
+                            except Exception as e:
+                                log.exception("AI response to voice message failed: %s", e)
+                    else:
+                        await message.reply("⚠️ نەتوانرا دەنگەکە بگوێزرێتەوە بۆ نووسین.")
+                    
+                    # Clean up the downloaded file
+                    try:
+                        os.remove(file_path)
+                    except:
+                        pass
+                        
+                except Exception as e:
+                    log.exception("Voice message processing failed: %s", e)
+                    await message.reply("❌ هەڵەیەک ڕوویدا لە پرۆسێسکردنی دەنگەکەدا.")
+    
+    # Process regular commands
+    await bot.process_commands(message)
+
 # /chat command
 @bot.tree.command(name="chat", description="Talk with the Kurdish AI bot")
 @app_commands.describe(message="Your message (Kurdish preferred)")
@@ -328,8 +497,8 @@ async def chat_command(inter: discord.Interaction, message: str):
             hist.append({"role": "assistant", "content": reply})
             await save_history(inter.guild.id if inter.guild else 0, inter.channel.id, inter.user.id, hist)
 
-            # Send reply with translation buttons
-            view = KurdishView()
+            # Send reply with translation and voice buttons
+            view = KurdishView(message_content=reply)
             await inter.followup.send(as_discord_safe(reply), view=view)
         except Exception as e:
             log.exception("/chat failed: %s", e)
@@ -354,8 +523,8 @@ async def ask_ai_context(inter: discord.Interaction, message: discord.Message):
             hist.append({"role": "user", "content": prompt})
             hist.append({"role": "assistant", "content": reply})
             await save_history(inter.guild.id if inter.guild else 0, inter.channel.id, inter.user.id, hist)
-            # Send reply with translation buttons (ephemeral)
-            view = KurdishView()
+            # Send reply with translation and voice buttons (ephemeral)
+            view = KurdishView(message_content=reply)
             await inter.followup.send(as_discord_safe(reply), view=view, ephemeral=True)
         except Exception as e:
             log.exception("context menu failed: %s", e)
@@ -373,6 +542,78 @@ async def clear_command(inter: discord.Interaction):
 async def ping(inter: discord.Interaction):
     await inter.response.send_message("🏓 pong")
 
+# Voice commands
+@bot.tree.command(name="join", description="Join your voice channel")
+async def join_voice(inter: discord.Interaction):
+    await inter.response.defer()
+    
+    if not inter.user.voice or not inter.user.voice.channel:
+        await inter.followup.send("⚠️ تکایە یەکەم جار بچۆرە ناو کەناڵی دەنگەوە.")
+        return
+    
+    try:
+        channel = inter.user.voice.channel
+        await channel.connect()
+        await inter.followup.send(f"🔊 بۆت چووە ناو کەناڵی دەنگەوە: {channel.name}")
+    except Exception as e:
+        log.exception("Voice join failed: %s", e)
+        await inter.followup.send("❌ نەتوانرا بچێتە ناو کەناڵی دەنگەوە.")
+
+@bot.tree.command(name="leave", description="Leave voice channel")
+async def leave_voice(inter: discord.Interaction):
+    await inter.response.defer()
+    
+    if not inter.guild.voice_client:
+        await inter.followup.send("❌ بۆت لە کەناڵی دەنگدا نییە.")
+        return
+    
+    try:
+        await inter.guild.voice_client.disconnect()
+        await inter.followup.send("👋 بۆت کەناڵی دەنگی بەجێهێشت.")
+    except Exception as e:
+        log.exception("Voice leave failed: %s", e)
+        await inter.followup.send("❌ نەتوانرا کەناڵی دەنگ بەجێبهێڵێت.")
+
+@bot.tree.command(name="speak", description="Speak a message in voice channel")
+@app_commands.describe(message="Text to speak in Kurdish")
+async def speak_command(inter: discord.Interaction, message: str):
+    await inter.response.defer()
+    
+    if not inter.guild.voice_client:
+        await inter.followup.send("❌ بۆت لە کەناڵی دەنگدا نییە. یەکەم `/join` بەکاربهێنە.")
+        return
+    
+    try:
+        # Generate TTS
+        import time
+        filename = f"tts_{int(time.time())}.mp3"
+        audio_path = await tts_kurdish(message, filename)
+        
+        # Play audio
+        voice_client = inter.guild.voice_client
+        if voice_client.is_playing():
+            voice_client.stop()
+        
+        source = discord.FFmpegPCMAudio(audio_path)
+        voice_client.play(source)
+        
+        await inter.followup.send(f"🗣️ دەنگی کرد: {message[:100]}{'...' if len(message) > 100 else ''}")
+        
+        # Clean up audio file after playing
+        def cleanup(error):
+            if error:
+                log.error(f"Audio playback error: {error}")
+            try:
+                os.remove(audio_path)
+            except:
+                pass
+        
+        source.cleanup = cleanup
+        
+    except Exception as e:
+        log.exception("TTS command failed: %s", e)
+        await inter.followup.send("❌ دەنگکردن سەرکەوتوو نەبوو.")
+
 # Prefix fallback: !chat <text>
 @bot.command(name="chat")
 async def legacy_chat(ctx: commands.Context, *, message: str):
@@ -388,8 +629,8 @@ async def legacy_chat(ctx: commands.Context, *, message: str):
             hist.append({"role": "user", "content": message})
             hist.append({"role": "assistant", "content": reply})
             await persist_history(ctx, hist)
-            # Send reply with translation buttons
-            view = KurdishView()
+            # Send reply with translation and voice buttons
+            view = KurdishView(message_content=reply)
             await ctx.reply(as_discord_safe(reply), view=view)
 
 # Graceful shutdown
