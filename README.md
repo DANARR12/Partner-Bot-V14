@@ -1,169 +1,234 @@
-# Discord Advertisement Bot
+# Discord Kurdish AI Bot 🤖
 
-A Discord bot that manages server advertisements with a cooldown system. Users can submit Discord server invites via DM, and the bot will post them to a designated channel with proper cooldown management.
+An advanced Discord bot that provides AI-powered conversations in Kurdish (Kurmanji/Sorani) with intelligent language detection, persistent conversation memory, and comprehensive moderation features.
 
-## Features
+## Features ✨
 
-- 📨 Advertisement submission via Direct Messages
-- ⏰ 60-minute cooldown system per user
-- 🔊 Automatic voice channel connection
-- 🌐 Multilingual support (Kurdish/English)
-- 🛡️ Invite link validation
-- 📊 Database storage for cooldowns
-- 🔄 Graceful error handling
+- **🗣️ Kurdish-First AI**: Automatic dialect detection (Kurmanji/Sorani) with manual override
+- **💾 Persistent Memory**: Per-user conversation history stored in SQLite database
+- **⚡ Slash Commands**: Modern Discord slash commands with context menus
+- **🛡️ Content Moderation**: OpenAI moderation API integration with safety fallbacks
+- **🔄 Streaming Responses**: Real-time token streaming for faster response delivery
+- **⚙️ Rate Limiting**: Built-in retry logic with exponential backoff
+- **📊 Structured Logging**: Comprehensive logging for monitoring and debugging
+- **🔧 Environment Config**: Easy configuration via environment variables
 
-## Setup
+## Commands 📋
 
-### Prerequisites
+### Slash Commands
+- `/chat <message>` - Chat with the Kurdish AI bot
+- `/clear` - Clear your conversation memory in the current channel
+- `/ping` - Health check command
 
-- Node.js 16.9.0 or higher
-- A Discord application/bot token
-- Discord server with appropriate permissions
+### Context Menu
+- **Ask Kurdish AI** - Right-click any message to ask the AI about it
 
-### Installation
+### Legacy Commands
+- `!chat <message>` - Traditional prefix command for chatting
 
-1. Clone or download this repository
-2. Install dependencies:
+## Setup Instructions 🚀
+
+### 1. Prerequisites
+
+- Python 3.8 or higher
+- Discord Bot Token ([Discord Developer Portal](https://discord.com/developers/applications))
+- OpenAI API Key ([OpenAI Platform](https://platform.openai.com/api-keys))
+
+### 2. Installation
+
+1. **Clone or download the project:**
    ```bash
-   npm install
+   git clone <repository-url>
+   cd discord-kurdish-ai-bot
    ```
 
-3. Create configuration file:
+2. **Install dependencies:**
    ```bash
-   cp config.json.example config.json
+   python -m pip install -U -r requirements.txt
    ```
 
-4. Edit `config.json` with your settings:
-   ```json
-   {
-       "partner": "PARTNER_CHANNEL_ID_HERE",
-       "link": "YOUR_PROMOTIONAL_LINK_HERE", 
-       "idvc": "VOICE_CHANNEL_ID_HERE"
-   }
-   ```
-
-5. Set up environment variables:
+3. **Configure environment variables:**
    ```bash
-   # Linux/Mac
-   export DISCORD_TOKEN="your_discord_bot_token_here"
+   cp .env.example .env
+   ```
    
-   # Windows
-   set DISCORD_TOKEN=your_discord_bot_token_here
+   Edit `.env` file with your actual values:
+   ```env
+   DISCORD_BOT_TOKEN=your_actual_discord_bot_token
+   OPENAI_API_KEY=your_actual_openai_api_key
+   OPENAI_MODEL=gpt-4o-mini
+   KURDISH_DIALECT=auto
+   MAX_HISTORY=10
+   OPENAI_CONCURRENCY=3
+   DB_PATH=memory.sqlite3
+   OWNER_IDS=your_discord_user_id
    ```
 
-6. Run the bot:
-   ```bash
-   npm start
-   ```
-
-### Configuration
-
-#### config.json Parameters
-
-- `partner` - Channel ID where advertisements will be posted
-- `link` - Optional promotional link to include in confirmation messages
-- `idvc` - Voice channel ID for the bot to join (optional)
-
-#### Environment Variables
-
-- `DISCORD_TOKEN` - Your Discord bot token (required)
-
-### Discord Bot Setup
+### 3. Discord Bot Setup
 
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a new application
-3. Go to "Bot" section and create a bot
-4. Copy the bot token and set it as `DISCORD_TOKEN` environment variable
-5. Under "Privileged Gateway Intents", enable:
-   - Message Content Intent
-   - Server Members Intent
-6. Invite the bot to your server with these permissions:
+2. Create a new application and bot
+3. Copy the bot token to your `.env` file
+4. Enable the following bot permissions:
    - Send Messages
+   - Use Slash Commands
    - Read Message History
-   - Connect (for voice)
-   - Use Voice Activity
+   - Add Reactions
+5. Enable these privileged gateway intents:
+   - Message Content Intent
+6. Invite the bot to your server with the generated OAuth2 URL
 
-## Usage
+### 4. Running the Bot
 
-### For Users
-
-1. **Request Advertisement**: Type `reklam` or `Reklam` in any channel
-2. **Submit Advertisement**: Send a Discord invite link via DM to the bot
-3. **Cooldown**: Wait 60 minutes between submissions
-
-### Bot Responses
-
-- **Kurdish**: `رێکلام لە تایبەت بۆم بنێرە` (Send advertisement privately to me)
-- **English**: `DM Me For Ads`
-
-### Commands
-
-- `reklam` / `Reklam` - Get instructions for advertisement submission
-- `@Bot` - Get advertisement submission instructions
-- Send invite link in DM - Submit advertisement
-
-## File Structure
-
-```
-├── index.js              # Main bot file
-├── config.json          # Bot configuration
-├── config.json.example  # Configuration template
-├── package.json         # Dependencies and scripts
-├── README.md           # This file
-└── database.json       # Auto-generated database file
+```bash
+python main.py
 ```
 
-## Database
+The bot will:
+- Initialize the SQLite database
+- Sync slash commands with Discord
+- Start listening for interactions
 
-The bot uses `multiple.db` with JSON storage. Cooldown data is automatically stored in `database.json`.
+## Configuration Options ⚙️
 
-## Error Handling
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DISCORD_BOT_TOKEN` | Required | Your Discord bot token |
+| `OPENAI_API_KEY` | Required | Your OpenAI API key |
+| `OPENAI_MODEL` | `gpt-4o-mini` | OpenAI model to use |
+| `KURDISH_DIALECT` | `auto` | Language mode: `auto`, `kurmanji`, `sorani` |
+| `MAX_HISTORY` | `10` | Messages per user per channel to remember |
+| `OPENAI_CONCURRENCY` | `3` | Max concurrent OpenAI API calls |
+| `DB_PATH` | `memory.sqlite3` | SQLite database file path |
+| `OWNER_IDS` | Empty | Comma-separated Discord user IDs for owners |
 
-- Invalid invite links are rejected with user feedback
-- Missing configuration shows helpful error messages
-- Voice channel connection failures are logged but don't stop the bot
-- Network errors are caught and logged
+## Kurdish Language Support 🗣️
 
-## Development
+### Dialect Detection
+- **Auto Mode**: Automatically detects Kurmanji or Sorani from user input
+- **Kurmanji Mode**: Forces responses in Kurmanji (Latin script)
+- **Sorani Mode**: Forces responses in Sorani (Arabic script)
 
-### Scripts
+### Language Examples
 
-- `npm start` - Run the bot
-- `npm run dev` - Run with nodemon for development
+**Kurmanji (Latin):**
+```
+User: Çawa ye heval?
+Bot: Silav! Ez baş im, spas. Tu çawa yî?
+```
 
-### Adding Features
+**Sorani (Arabic):**
+```
+User: چۆنیت برا؟
+Bot: سڵاو! من باشم، سوپاس. تۆ چۆنیت؟
+```
 
-The code is modular with separate functions for:
-- `handlePublicMessage()` - Public channel interactions
-- `handleDirectMessage()` - Advertisement submission handling
-- `connectToVoiceChannel()` - Voice channel management
+## Database Schema 💾
 
-## Troubleshooting
+The bot uses SQLite to store conversation history:
+
+```sql
+CREATE TABLE memory (
+    guild_id    INTEGER,
+    channel_id  INTEGER,
+    user_id     INTEGER,
+    messages    TEXT,  -- JSON array of message objects
+    PRIMARY KEY (guild_id, channel_id, user_id)
+);
+```
+
+## Error Handling & Safety 🛡️
+
+- **Content Moderation**: All messages are screened using OpenAI's moderation API
+- **Rate Limiting**: Exponential backoff prevents API abuse
+- **Graceful Degradation**: Bot continues operating even if moderation fails
+- **Message Sanitization**: Prevents @everyone/@here abuse
+- **Length Limits**: Messages are truncated to Discord's limits
+
+## Logging 📊
+
+The bot provides structured logging with different levels:
+
+- **INFO**: Bot startup, command sync, user interactions
+- **WARNING**: Moderation failures, API issues
+- **ERROR**: Critical failures, database errors
+- **DEBUG**: Detailed operation information
+
+## Deployment 🚀
+
+### Local Development
+```bash
+python main.py
+```
+
+### Production Deployment
+1. Use a process manager like `systemd` or `pm2`
+2. Set up log rotation
+3. Use environment variables for configuration
+4. Consider using Docker for containerization
+
+### Docker Example
+```dockerfile
+FROM python:3.11-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["python", "main.py"]
+```
+
+## Troubleshooting 🔧
 
 ### Common Issues
 
-1. **Bot not responding**
-   - Check if bot token is correct
+1. **Bot not responding to slash commands:**
+   - Check if commands are synced (restart bot)
    - Verify bot has necessary permissions
-   - Check if config.json exists and is valid
+   - Check console for sync errors
 
-2. **Voice connection fails**
-   - Ensure bot has Connect permission
-   - Verify voice channel ID is correct
-   - Check if channel exists
+2. **OpenAI API errors:**
+   - Verify API key is correct and has credits
+   - Check model availability
+   - Review rate limits
 
-3. **Database errors**
-   - Ensure write permissions in bot directory
-   - Check if multiple.db is properly installed
+3. **Database errors:**
+   - Ensure write permissions for database file
+   - Check disk space
+   - Verify SQLite installation
 
-### Support
+4. **Memory issues:**
+   - Adjust `MAX_HISTORY` to lower value
+   - Monitor database size
+   - Consider periodic cleanup
 
-If you encounter issues:
-1. Check the console for error messages
-2. Verify all configuration values
-3. Ensure all dependencies are installed
-4. Check Discord permissions
+### Debug Mode
+Set logging level to DEBUG for detailed information:
+```python
+logging.basicConfig(level=logging.DEBUG)
+```
 
-## License
+## Contributing 🤝
 
-This project is licensed under the MIT License.
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Test thoroughly
+5. Submit a pull request
+
+## License 📄
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support 💬
+
+For support and questions:
+- Create an issue on GitHub
+- Check the troubleshooting section
+- Review the logs for error details
+
+## Acknowledgments 🙏
+
+- OpenAI for the GPT API
+- Discord.py community
+- Kurdish language community
+- Contributors and testers
