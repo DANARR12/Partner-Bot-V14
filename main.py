@@ -37,6 +37,7 @@ import aiosqlite
 import discord
 from discord import app_commands
 from discord.ext import commands
+from discord.ui import View, Button
 from dotenv import load_dotenv
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
@@ -205,6 +206,55 @@ class AI:
         except Exception as e:
             raise AIError(str(e))
 
+# -------------------- UI Components --------------------
+
+class KurdishView(View):
+    def __init__(self):
+        super().__init__(timeout=None)
+        self.add_item(Button(label="Translate ↔", style=discord.ButtonStyle.primary, custom_id="translate"))
+    
+    @discord.ui.button(label="🔄 Kurmancî", style=discord.ButtonStyle.secondary, custom_id="to_kurmanji")
+    async def to_kurmanji(self, interaction: discord.Interaction, button: Button):
+        await interaction.response.defer(ephemeral=True)
+        
+        # Get the original message
+        message = interaction.message
+        if not message or not message.content:
+            await interaction.followup.send("⚠️ پەیامێک نەدۆزرایەوە بۆ وەرگێڕان.", ephemeral=True)
+            return
+        
+        async with openai_sema:
+            try:
+                # Force Kurmanji translation
+                temp_ai = AI(api_key=OPENAI_API_KEY, cfg=AIConfig(model=OPENAI_MODEL, dialect="kurmanji"))
+                prompt = f"ئەم دەقە بۆ کوردیی کورمانجی وەربگێڕە:\n\n{message.content}"
+                translation = await temp_ai.chat([], prompt)
+                await interaction.followup.send(f"**Kurmancî:** {as_discord_safe(translation)}", ephemeral=True)
+            except Exception as e:
+                log.exception("Kurmanji translation failed: %s", e)
+                await interaction.followup.send("❌ وەرگێڕان سەرکەوتوو نەبوو.", ephemeral=True)
+    
+    @discord.ui.button(label="🔄 سۆرانی", style=discord.ButtonStyle.secondary, custom_id="to_sorani")
+    async def to_sorani(self, interaction: discord.Interaction, button: Button):
+        await interaction.response.defer(ephemeral=True)
+        
+        # Get the original message
+        message = interaction.message
+        if not message or not message.content:
+            await interaction.followup.send("⚠️ پەیامێک نەدۆزرایەوە بۆ وەرگێڕان.", ephemeral=True)
+            return
+        
+        async with openai_sema:
+            try:
+                # Force Sorani translation
+                temp_ai = AI(api_key=OPENAI_API_KEY, cfg=AIConfig(model=OPENAI_MODEL, dialect="sorani"))
+                prompt = f"ئەم دەقە بۆ کوردیی سۆرانی وەربگێڕە:\n\n{message.content}"
+                translation = await temp_ai.chat([], prompt)
+                await interaction.followup.send(f"**سۆرانی:** {as_discord_safe(translation)}", ephemeral=True)
+            except Exception as e:
+                log.exception("Sorani translation failed: %s", e)
+                await interaction.followup.send("❌ وەرگێڕان سەرکەوتوو نەبوو.", ephemeral=True)
+
 # -------------------- Discord Bot --------------------
 
 intents = discord.Intents.default()
@@ -278,7 +328,9 @@ async def chat_command(inter: discord.Interaction, message: str):
             hist.append({"role": "assistant", "content": reply})
             await save_history(inter.guild.id if inter.guild else 0, inter.channel.id, inter.user.id, hist)
 
-            await inter.followup.send(as_discord_safe(reply))
+            # Send reply with translation buttons
+            view = KurdishView()
+            await inter.followup.send(as_discord_safe(reply), view=view)
         except Exception as e:
             log.exception("/chat failed: %s", e)
             await inter.followup.send("❌ هەڵەیەک ڕوویدا. تکایە دواتر هەوڵ بدە.")
@@ -302,7 +354,9 @@ async def ask_ai_context(inter: discord.Interaction, message: discord.Message):
             hist.append({"role": "user", "content": prompt})
             hist.append({"role": "assistant", "content": reply})
             await save_history(inter.guild.id if inter.guild else 0, inter.channel.id, inter.user.id, hist)
-            await inter.followup.send(as_discord_safe(reply), ephemeral=True)
+            # Send reply with translation buttons (ephemeral)
+            view = KurdishView()
+            await inter.followup.send(as_discord_safe(reply), view=view, ephemeral=True)
         except Exception as e:
             log.exception("context menu failed: %s", e)
             await inter.followup.send("❌ هەڵەیەک ڕوویدا.", ephemeral=True)
@@ -334,7 +388,9 @@ async def legacy_chat(ctx: commands.Context, *, message: str):
             hist.append({"role": "user", "content": message})
             hist.append({"role": "assistant", "content": reply})
             await persist_history(ctx, hist)
-            await ctx.reply(as_discord_safe(reply))
+            # Send reply with translation buttons
+            view = KurdishView()
+            await ctx.reply(as_discord_safe(reply), view=view)
 
 # Graceful shutdown
 shutdown_event = asyncio.Event()
