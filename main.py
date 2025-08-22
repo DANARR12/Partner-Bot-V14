@@ -209,8 +209,23 @@ class AI:
 
 # -------------------- Voice Processing (TTS/STT) --------------------
 
-async def tts_kurdish(text: str, filename: str = "tts.mp3") -> str:
-    """Generate Kurdish TTS audio file"""
+async def ai_reply_sorani(user_text: str) -> str:
+    """Direct AI reply in Sorani only"""
+    try:
+        completion = await ai.client.chat.completions.create(
+            model=OPENAI_MODEL,
+            messages=[
+                {"role": "system", "content": "هەموو وەڵامەکانت تەنها بە کوردی سۆرانی بنوسە. هەرگیز زمانێکی تر بەکار مەهێنە."},
+                {"role": "user", "content": user_text},
+            ]
+        )
+        return completion.choices[0].message.content
+    except Exception as e:
+        log.exception("Sorani AI reply failed: %s", e)
+        raise AIError(str(e))
+
+async def tts_sorani(text: str, filename: str = "sorani_tts.mp3") -> str:
+    """Convert Sorani text to speech"""
     try:
         response = await ai.client.audio.speech.create(
             model="tts-1",  # Using correct OpenAI TTS model
@@ -223,8 +238,12 @@ async def tts_kurdish(text: str, filename: str = "tts.mp3") -> str:
             f.write(response.content)
         return file_path
     except Exception as e:
-        log.exception("TTS generation failed: %s", e)
+        log.exception("Sorani TTS generation failed: %s", e)
         raise
+
+async def tts_kurdish(text: str, filename: str = "tts.mp3") -> str:
+    """Generate Kurdish TTS audio file (legacy function)"""
+    return await tts_sorani(text, filename)
 
 async def stt_kurdish(file_path: str) -> str:
     """Transcribe Kurdish audio to text"""
@@ -632,6 +651,81 @@ async def legacy_chat(ctx: commands.Context, *, message: str):
             # Send reply with translation and voice buttons
             view = KurdishView(message_content=reply)
             await ctx.reply(as_discord_safe(reply), view=view)
+
+# Streamlined voice commands
+@bot.command(name="join")
+async def join_voice_legacy(ctx: commands.Context):
+    """Bot joins your voice channel"""
+    if ctx.author.voice:
+        channel = ctx.author.voice.channel
+        await channel.connect()
+        await ctx.send("🔊 بۆت چووە ناو کەناڵی دەنگەوە!")
+    else:
+        await ctx.send("❌ دەبێت لە کەناڵی دەنگدا بیت.")
+
+@bot.command(name="leave")
+async def leave_voice_legacy(ctx: commands.Context):
+    """Bot leaves the voice channel"""
+    if ctx.voice_client:
+        await ctx.voice_client.disconnect()
+        await ctx.send("👋 بۆت کەناڵی دەنگی بەجێهێشت.")
+    else:
+        await ctx.send("❌ بۆت لە کەناڵی دەنگدا نییە.")
+
+@bot.command(name="talk")
+async def talk_sorani(ctx: commands.Context, *, message: str):
+    """AI chat with voice response in Sorani"""
+    if not ctx.voice_client:
+        await ctx.send("❌ بۆت لە کەناڵی دەنگدا نییە. یەکەم `!join` بەکاربهێنە.")
+        return
+    
+    async with ctx.typing():
+        try:
+            # Moderate input
+            await ai.moderate(message)
+            
+            # Get AI reply in Sorani
+            async with openai_sema:
+                reply = await ai_reply_sorani(message)
+                
+                # Generate TTS
+                import time
+                filename = f"sorani_tts_{int(time.time())}.mp3"
+                mp3_path = await tts_sorani(reply, filename)
+                
+                # Play audio
+                if ctx.voice_client.is_playing():
+                    ctx.voice_client.stop()
+                
+                source = discord.FFmpegPCMAudio(mp3_path)
+                ctx.voice_client.play(source)
+                
+                # Send text response with buttons
+                view = KurdishView(message_content=reply)
+                await ctx.send(f"🗣️ {as_discord_safe(reply)}", view=view)
+                
+                # Save to conversation history
+                hist = await build_history(ctx)
+                hist.append({"role": "user", "content": message})
+                hist.append({"role": "assistant", "content": reply})
+                await persist_history(ctx, hist)
+                
+                # Clean up audio file after playing
+                def cleanup(error):
+                    if error:
+                        log.error(f"Audio playback error: {error}")
+                    try:
+                        os.remove(mp3_path)
+                    except:
+                        pass
+                
+                source.cleanup = cleanup
+                
+        except ModerationFlag:
+            await ctx.send("⚠️ ڕێگە پێنەدرا.")
+        except Exception as e:
+            log.exception("Talk command failed: %s", e)
+            await ctx.send("❌ هەڵەیەک ڕوویدا لە قسەکردندا.")
 
 # Graceful shutdown
 shutdown_event = asyncio.Event()
