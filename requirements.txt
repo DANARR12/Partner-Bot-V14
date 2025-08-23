@@ -1,5 +1,6 @@
-# Python Dependencies for Discord Bots
 discord.py>=2.3.0
+aiosqlite>=0.19.0
 python-dotenv>=1.0.0
-
-# Note: For Node.js Discord Partner Bot, run: npm install
+openai>=1.0.0
+tiktoken>=0.5.0
+tenacity>=8.2.0
