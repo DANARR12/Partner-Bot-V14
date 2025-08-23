@@ -1,6 +1,6 @@
-# Modern Portfolio Website
+# Havalan Cosmetic Website
 
-A beautiful, responsive portfolio website built with HTML, CSS, and JavaScript. Perfect for developers, designers, freelancers, or anyone looking to showcase their work online.
+A beautiful, responsive cosmetic business website built with HTML, CSS, and JavaScript. Perfect for beauty brands, cosmetic companies, or anyone looking to showcase their beauty products and services online.
 
 ## ✨ Features
 
@@ -8,9 +8,9 @@ A beautiful, responsive portfolio website built with HTML, CSS, and JavaScript. 
 - **Fully Responsive**: Works perfectly on all devices (desktop, tablet, mobile)
 - **Smooth Animations**: CSS animations and JavaScript interactions for an engaging experience
 - **Contact Form**: Functional contact form with validation and notifications
-- **Portfolio Showcase**: Beautiful portfolio section to display your projects
-- **Skills Display**: Interactive skill tags with hover effects
-- **Statistics Counter**: Animated counters for your achievements
+- **Product Showcase**: Beautiful product section to display your cosmetic collections
+- **Specialties Display**: Interactive specialty tags with hover effects
+- **Statistics Counter**: Animated counters for your business achievements
 - **Mobile Navigation**: Hamburger menu for mobile devices
 - **SEO Optimized**: Semantic HTML structure for better search engine visibility
 
@@ -22,20 +22,20 @@ Simply open `index.html` in your web browser to view the website.
 ### 2. Customize Content
 Edit the HTML file to personalize the content:
 
-#### Personal Information
-- Change "Your Name" to your actual name
+#### Business Information
+- Change "Havalan Cosmetic" to your actual business name
 - Update the subtitle and description in the hero section
-- Modify the about section with your own story
+- Modify the about section with your business story
 - Update contact information (email, phone, location)
 
-#### Skills
-- Add or remove skill tags in the about section
-- Customize the skills that match your expertise
+#### Specialties
+- Add or remove specialty tags in the about section
+- Customize the specialties that match your business offerings
 
-#### Portfolio
-- Replace portfolio items with your actual projects
-- Add real project images (replace the placeholder icons)
-- Update project descriptions and links
+#### Products
+- Replace product items with your actual cosmetic collections
+- Add real product images (replace the placeholder icons)
+- Update product descriptions and links
 
 #### Services
 - Modify the services to match what you offer

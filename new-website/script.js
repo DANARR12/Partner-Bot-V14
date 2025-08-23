@@ -206,7 +206,7 @@ document.querySelectorAll('.portfolio-link').forEach(link => {
     link.addEventListener('click', (e) => {
         e.preventDefault();
         const projectName = link.closest('.portfolio-overlay').querySelector('h3').textContent;
-        showNotification(`Opening ${projectName} project...`, 'info');
+        showNotification(`Opening ${projectName} collection...`, 'info');
     });
 });
 
