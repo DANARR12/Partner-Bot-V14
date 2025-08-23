@@ -40,6 +40,13 @@ async def status(ctx):
     embed.add_field(name="Guilds", value=len(bot.guilds), inline=True)
     await ctx.send(embed=embed)
 
+@bot.command()
+async def setstatus(ctx, *, text):
+    """Set bot streaming status"""
+    activity = discord.Streaming(name=text, url="https://twitch.tv/yourchannel")
+    await bot.change_presence(activity=activity)
+    await ctx.send(f"✅ Status updated to: {text}")
+
 if __name__ == "__main__":
     # Get token from environment variable
     bot_token = os.getenv("DISCORD_BOT_TOKEN")

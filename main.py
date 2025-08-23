@@ -891,6 +891,69 @@ async def cursor_status_command(inter: discord.Interaction):
     
     await inter.response.send_message(embed=embed, ephemeral=True)
 
+# Bot Status Management Commands
+@bot.command()
+async def setstatus(ctx, *, text):
+    """Set bot streaming status"""
+    activity = discord.Streaming(name=text, url="https://twitch.tv/yourchannel")
+    await bot.change_presence(activity=activity)
+    await ctx.send(f"✅ Status updated to: {text}")
+
+@bot.command()
+async def setgame(ctx, *, text):
+    """Set bot game activity"""
+    activity = discord.Game(name=text)
+    await bot.change_presence(activity=activity)
+    await ctx.send(f"🎮 Game activity set to: {text}")
+
+@bot.command()
+async def setwatching(ctx, *, text):
+    """Set bot watching activity"""
+    activity = discord.Activity(type=discord.ActivityType.watching, name=text)
+    await bot.change_presence(activity=activity)
+    await ctx.send(f"👀 Watching activity set to: {text}")
+
+@bot.command()
+async def setlistening(ctx, *, text):
+    """Set bot listening activity"""
+    activity = discord.Activity(type=discord.ActivityType.listening, name=text)
+    await bot.change_presence(activity=activity)
+    await ctx.send(f"🎵 Listening activity set to: {text}")
+
+@bot.command()
+async def resetstatus(ctx):
+    """Reset bot status to default"""
+    activity = discord.Game("Advanced AI in Sorani")
+    await bot.change_presence(status=discord.Status.online, activity=activity)
+    await ctx.send("🔄 Status reset to default: Advanced AI in Sorani")
+
+# Owner-only status commands with checks
+@bot.command()
+async def setstatus_owner(ctx, status_type: str, *, text):
+    """Owner-only comprehensive status setter"""
+    if ctx.author.id not in OWNER_IDS:
+        await ctx.send("❌ This command is restricted to bot owners.")
+        return
+    
+    status_type = status_type.lower()
+    
+    if status_type == "streaming":
+        activity = discord.Streaming(name=text, url="https://twitch.tv/yourchannel")
+    elif status_type == "playing":
+        activity = discord.Game(name=text)
+    elif status_type == "watching":
+        activity = discord.Activity(type=discord.ActivityType.watching, name=text)
+    elif status_type == "listening":
+        activity = discord.Activity(type=discord.ActivityType.listening, name=text)
+    elif status_type == "competing":
+        activity = discord.Activity(type=discord.ActivityType.competing, name=text)
+    else:
+        await ctx.send("❌ Invalid status type. Use: streaming, playing, watching, listening, competing")
+        return
+    
+    await bot.change_presence(activity=activity)
+    await ctx.send(f"✅ Owner command: {status_type} status set to: {text}")
+
 # Hybrid AI + Cursor Agent Commands
 @bot.tree.command(name="ai_code_help", description="Get coding help combining Kurdish AI and Cursor Agent")
 @app_commands.describe(
