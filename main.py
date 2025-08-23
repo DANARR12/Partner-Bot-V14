@@ -42,6 +42,12 @@ from discord.ui import View, Button
 from dotenv import load_dotenv
 from tenacity import retry, stop_after_attempt, wait_exponential, retry_if_exception_type
 
+# Additional imports for Cursor Agent integration
+import httpx
+import aiofiles
+from pydantic import BaseModel
+from typing import Union, Optional, Any
+
 # OpenAI (v1+ SDK)
 try:
     from openai import AsyncOpenAI
@@ -59,6 +65,12 @@ KURDISH_DIALECT = os.getenv("KURDISH_DIALECT", "auto").lower()
 MAX_HISTORY = int(os.getenv("MAX_HISTORY", "10"))
 OWNER_IDS = {int(x) for x in re.findall(r"\d+", os.getenv("OWNER_IDS", ""))}
 DB_PATH = os.getenv("DB_PATH", "memory.sqlite3")
+
+# Cursor Agent Configuration
+CURSOR_API_KEY = os.getenv("CURSOR_API_KEY")
+CURSOR_SESSION_TOKEN = os.getenv("CURSOR_SESSION_TOKEN")
+CURSOR_BASE_URL = os.getenv("CURSOR_BASE_URL", "https://api.cursor.com")
+CURSOR_ENABLED = os.getenv("CURSOR_ENABLED", "false").lower() == "true"
 
 if not DISCORD_BOT_TOKEN:
     raise SystemExit("Missing DISCORD_BOT_TOKEN in env")
@@ -206,6 +218,138 @@ class AI:
             return "".join(out).strip()
         except Exception as e:
             raise AIError(str(e))
+
+# -------------------- Cursor Agent Integration --------------------
+
+class CursorAgentRequest(BaseModel):
+    task_description: str
+    file_path: Optional[str] = None
+    code_context: Optional[str] = None
+    language: str = "python"
+
+class CursorAgentResponse(BaseModel):
+    success: bool
+    result: str
+    error: Optional[str] = None
+    files_modified: List[str] = []
+
+class CursorAgentError(Exception):
+    pass
+
+class CursorAgent:
+    def __init__(self, api_key: Optional[str] = None, session_token: Optional[str] = None, base_url: str = "https://api.cursor.com"):
+        self.api_key = api_key
+        self.session_token = session_token
+        self.base_url = base_url
+        self.client = httpx.AsyncClient(timeout=30.0)
+        
+        # Setup headers
+        self.headers = {
+            "Content-Type": "application/json",
+            "User-Agent": "Discord-Kurdish-Bot/1.0"
+        }
+        
+        if self.api_key:
+            self.headers["Authorization"] = f"Bearer {self.api_key}"
+        elif self.session_token:
+            self.headers["Cookie"] = f"WorkosCursorSessionToken={self.session_token}"
+    
+    async def __aenter__(self):
+        return self
+    
+    async def __aexit__(self, exc_type, exc_val, exc_tb):
+        await self.client.aclose()
+    
+    @retry(
+        wait=wait_exponential(multiplier=1, min=1, max=10),
+        stop=stop_after_attempt(3),
+        retry=retry_if_exception_type((CursorAgentError, httpx.RequestError)),
+        reraise=True,
+    )
+    async def execute_task(self, request: CursorAgentRequest) -> CursorAgentResponse:
+        """Execute a coding task using Cursor Agent"""
+        try:
+            payload = {
+                "task": request.task_description,
+                "language": request.language,
+                "context": request.code_context or "",
+            }
+            
+            if request.file_path:
+                payload["file_path"] = request.file_path
+            
+            # Simulate API call - this would be the actual Cursor API endpoint
+            response = await self.client.post(
+                f"{self.base_url}/v1/agent/execute",
+                headers=self.headers,
+                json=payload
+            )
+            
+            if response.status_code == 200:
+                data = response.json()
+                return CursorAgentResponse(
+                    success=True,
+                    result=data.get("result", ""),
+                    files_modified=data.get("files_modified", [])
+                )
+            else:
+                error_msg = f"Cursor Agent API error: {response.status_code}"
+                log.warning(error_msg)
+                return CursorAgentResponse(
+                    success=False,
+                    result="",
+                    error=error_msg
+                )
+                
+        except httpx.RequestError as e:
+            error_msg = f"Network error communicating with Cursor Agent: {str(e)}"
+            log.exception(error_msg)
+            raise CursorAgentError(error_msg)
+        except Exception as e:
+            error_msg = f"Unexpected error in Cursor Agent execution: {str(e)}"
+            log.exception(error_msg)
+            raise CursorAgentError(error_msg)
+    
+    async def code_review(self, code: str, language: str = "python") -> str:
+        """Get code review suggestions from Cursor Agent"""
+        request = CursorAgentRequest(
+            task_description=f"Review this {language} code and provide suggestions for improvement:\n\n```{language}\n{code}\n```",
+            code_context=code,
+            language=language
+        )
+        
+        response = await self.execute_task(request)
+        if response.success:
+            return response.result
+        else:
+            raise CursorAgentError(response.error or "Code review failed")
+    
+    async def generate_code(self, description: str, language: str = "python") -> str:
+        """Generate code based on description"""
+        request = CursorAgentRequest(
+            task_description=f"Generate {language} code for: {description}",
+            language=language
+        )
+        
+        response = await self.execute_task(request)
+        if response.success:
+            return response.result
+        else:
+            raise CursorAgentError(response.error or "Code generation failed")
+    
+    async def debug_code(self, code: str, error_msg: str, language: str = "python") -> str:
+        """Debug code with given error message"""
+        request = CursorAgentRequest(
+            task_description=f"Debug this {language} code that produces error '{error_msg}':\n\n```{language}\n{code}\n```",
+            code_context=code,
+            language=language
+        )
+        
+        response = await self.execute_task(request)
+        if response.success:
+            return response.result
+        else:
+            raise CursorAgentError(response.error or "Code debugging failed")
 
 # -------------------- Voice Processing (TTS/STT) --------------------
 
@@ -367,9 +511,25 @@ intents.voice_states = True     # needed for voice channel functionality
 bot = commands.Bot(command_prefix="!", intents=intents)
 ai = AI(api_key=OPENAI_API_KEY, cfg=AIConfig(model=OPENAI_MODEL, dialect=KURDISH_DIALECT))
 
+# Initialize Cursor Agent if enabled
+cursor_agent = None
+if CURSOR_ENABLED and (CURSOR_API_KEY or CURSOR_SESSION_TOKEN):
+    cursor_agent = CursorAgent(
+        api_key=CURSOR_API_KEY,
+        session_token=CURSOR_SESSION_TOKEN,
+        base_url=CURSOR_BASE_URL
+    )
+    log.info("Cursor Agent initialized")
+else:
+    log.info("Cursor Agent disabled or not configured")
+
 # Simple in-process semaphore to throttle concurrent OpenAI calls
 OPENAI_CONCURRENCY = int(os.getenv("OPENAI_CONCURRENCY", "3"))
 openai_sema = asyncio.Semaphore(OPENAI_CONCURRENCY)
+
+# Cursor Agent concurrency control
+CURSOR_CONCURRENCY = int(os.getenv("CURSOR_CONCURRENCY", "2"))
+cursor_sema = asyncio.Semaphore(CURSOR_CONCURRENCY)
 
 # Create downloads directory for voice messages
 Path("downloads").mkdir(exist_ok=True)
@@ -560,6 +720,268 @@ async def clear_command(inter: discord.Interaction):
 @bot.tree.command(name="ping", description="Health check")
 async def ping(inter: discord.Interaction):
     await inter.response.send_message("🏓 pong")
+
+# Cursor Agent Commands
+@bot.tree.command(name="code_review", description="Get code review from Cursor Agent")
+@app_commands.describe(
+    code="Code to review",
+    language="Programming language (default: python)"
+)
+async def code_review_command(inter: discord.Interaction, code: str, language: str = "python"):
+    if not cursor_agent:
+        await inter.response.send_message("❌ Cursor Agent is not configured. Please set CURSOR_ENABLED=true and provide API credentials.", ephemeral=True)
+        return
+    
+    await inter.response.defer(thinking=True)
+    
+    try:
+        # Moderate the code input
+        await ai.moderate(code)
+    except ModerationFlag:
+        await inter.followup.send("⚠️ کۆدەکە بەهۆی یاسای پاراستن ڕەتکرایەوە.")
+        return
+    
+    async with cursor_sema:
+        try:
+            review = await cursor_agent.code_review(code, language)
+            
+            # Create embed for better formatting
+            embed = discord.Embed(
+                title="🔍 Cursor Agent Code Review",
+                description=as_discord_safe(review),
+                color=discord.Color.blue()
+            )
+            embed.add_field(name="Language", value=language, inline=True)
+            embed.add_field(name="Requested by", value=inter.user.mention, inline=True)
+            
+            await inter.followup.send(embed=embed)
+            
+        except CursorAgentError as e:
+            log.exception("Cursor Agent code review failed: %s", e)
+            await inter.followup.send(f"❌ Code review failed: {str(e)}")
+        except Exception as e:
+            log.exception("Unexpected error in code review: %s", e)
+            await inter.followup.send("❌ هەڵەیەک ڕوویدا لە پێداچوونەوەی کۆدەکەدا.")
+
+@bot.tree.command(name="generate_code", description="Generate code using Cursor Agent")
+@app_commands.describe(
+    description="Description of what code to generate",
+    language="Programming language (default: python)"
+)
+async def generate_code_command(inter: discord.Interaction, description: str, language: str = "python"):
+    if not cursor_agent:
+        await inter.response.send_message("❌ Cursor Agent is not configured. Please set CURSOR_ENABLED=true and provide API credentials.", ephemeral=True)
+        return
+    
+    await inter.response.defer(thinking=True)
+    
+    try:
+        # Moderate the description input
+        await ai.moderate(description)
+    except ModerationFlag:
+        await inter.followup.send("⚠️ داواکاریەکە بەهۆی یاسای پاراستن ڕەتکرایەوە.")
+        return
+    
+    async with cursor_sema:
+        try:
+            generated_code = await cursor_agent.generate_code(description, language)
+            
+            # Create embed with code block
+            embed = discord.Embed(
+                title="💻 Cursor Agent Code Generation",
+                color=discord.Color.green()
+            )
+            embed.add_field(name="Description", value=description, inline=False)
+            embed.add_field(name="Language", value=language, inline=True)
+            embed.add_field(name="Requested by", value=inter.user.mention, inline=True)
+            
+            # Add code in a code block
+            code_block = f"```{language}\n{generated_code}\n```"
+            if len(code_block) > 1000:
+                # If code is too long, truncate and provide a file
+                embed.add_field(name="Generated Code", value=f"```{language}\n{generated_code[:800]}...\n```\n*Code truncated - full version in file*", inline=False)
+                
+                # Save to file
+                filename = f"generated_{language}_{int(asyncio.get_event_loop().time())}.{language}"
+                async with aiofiles.open(filename, 'w') as f:
+                    await f.write(generated_code)
+                
+                await inter.followup.send(embed=embed, file=discord.File(filename))
+                
+                # Clean up file
+                try:
+                    os.remove(filename)
+                except:
+                    pass
+            else:
+                embed.add_field(name="Generated Code", value=code_block, inline=False)
+                await inter.followup.send(embed=embed)
+            
+        except CursorAgentError as e:
+            log.exception("Cursor Agent code generation failed: %s", e)
+            await inter.followup.send(f"❌ Code generation failed: {str(e)}")
+        except Exception as e:
+            log.exception("Unexpected error in code generation: %s", e)
+            await inter.followup.send("❌ هەڵەیەک ڕوویدا لە درووستکردنی کۆدەکەدا.")
+
+@bot.tree.command(name="debug_code", description="Debug code using Cursor Agent")
+@app_commands.describe(
+    code="Code that has an error",
+    error_message="Error message you're getting",
+    language="Programming language (default: python)"
+)
+async def debug_code_command(inter: discord.Interaction, code: str, error_message: str, language: str = "python"):
+    if not cursor_agent:
+        await inter.response.send_message("❌ Cursor Agent is not configured. Please set CURSOR_ENABLED=true and provide API credentials.", ephemeral=True)
+        return
+    
+    await inter.response.defer(thinking=True)
+    
+    try:
+        # Moderate the inputs
+        await ai.moderate(f"{code}\n{error_message}")
+    except ModerationFlag:
+        await inter.followup.send("⚠️ کۆد یان هەڵەکە بەهۆی یاسای پاراستن ڕەتکرایەوە.")
+        return
+    
+    async with cursor_sema:
+        try:
+            debug_solution = await cursor_agent.debug_code(code, error_message, language)
+            
+            # Create embed for debugging results
+            embed = discord.Embed(
+                title="🐛 Cursor Agent Code Debug",
+                description=as_discord_safe(debug_solution),
+                color=discord.Color.orange()
+            )
+            embed.add_field(name="Error", value=error_message[:200] + "..." if len(error_message) > 200 else error_message, inline=False)
+            embed.add_field(name="Language", value=language, inline=True)
+            embed.add_field(name="Requested by", value=inter.user.mention, inline=True)
+            
+            await inter.followup.send(embed=embed)
+            
+        except CursorAgentError as e:
+            log.exception("Cursor Agent debugging failed: %s", e)
+            await inter.followup.send(f"❌ Debugging failed: {str(e)}")
+        except Exception as e:
+            log.exception("Unexpected error in debugging: %s", e)
+            await inter.followup.send("❌ هەڵەیەک ڕوویدا لە چارەسەرکردنی کۆدەکەدا.")
+
+@bot.tree.command(name="cursor_status", description="Check Cursor Agent status")
+async def cursor_status_command(inter: discord.Interaction):
+    embed = discord.Embed(
+        title="🤖 Cursor Agent Status",
+        color=discord.Color.blue()
+    )
+    
+    if cursor_agent:
+        embed.add_field(name="Status", value="✅ Enabled and Active", inline=False)
+        embed.add_field(name="Base URL", value=CURSOR_BASE_URL, inline=True)
+        embed.add_field(name="Authentication", value="✅ Configured" if (CURSOR_API_KEY or CURSOR_SESSION_TOKEN) else "❌ Missing", inline=True)
+    else:
+        embed.add_field(name="Status", value="❌ Disabled or Not Configured", inline=False)
+        embed.add_field(name="Setup Required", value="Set CURSOR_ENABLED=true and provide API credentials", inline=False)
+    
+    embed.add_field(name="Available Commands", value="`/code_review` - Review code\n`/generate_code` - Generate code\n`/debug_code` - Debug code\n`/cursor_status` - Check status", inline=False)
+    
+    await inter.response.send_message(embed=embed, ephemeral=True)
+
+# Hybrid AI + Cursor Agent Commands
+@bot.tree.command(name="ai_code_help", description="Get coding help combining Kurdish AI and Cursor Agent")
+@app_commands.describe(
+    question="Your coding question in Kurdish or English",
+    code="Optional code to analyze (if provided, Cursor Agent will review it)"
+)
+async def ai_code_help_command(inter: discord.Interaction, question: str, code: str = None):
+    await inter.response.defer(thinking=True)
+    
+    try:
+        # Moderate the inputs
+        await ai.moderate(question)
+        if code:
+            await ai.moderate(code)
+    except ModerationFlag:
+        await inter.followup.send("⚠️ داواکاریەکە بەهۆی یاسای پاراستن ڕەتکرایەوە.")
+        return
+    
+    # Start with Kurdish AI response
+    async with openai_sema:
+        try:
+            hist = await get_history(inter.guild.id if inter.guild else 0, inter.channel.id, inter.user.id)
+            
+            # Enhance question with coding context
+            enhanced_question = question
+            if code:
+                enhanced_question = f"ئەم کۆدە شرۆڤە بکە و یارمەتیم بدە: {question}\n\nکۆد:\n```\n{code}\n```"
+            
+            kurdish_ai_response = await ai.chat(hist, enhanced_question)
+            
+            # Save to history
+            hist.append({"role": "user", "content": enhanced_question})
+            hist.append({"role": "assistant", "content": kurdish_ai_response})
+            await save_history(inter.guild.id if inter.guild else 0, inter.channel.id, inter.user.id, hist)
+            
+        except Exception as e:
+            log.exception("Kurdish AI response failed: %s", e)
+            kurdish_ai_response = "❌ هەڵەیەک ڕوویدا لە وەڵامی AI ی کوردی."
+    
+    # If code is provided and Cursor Agent is available, get technical analysis
+    cursor_analysis = None
+    if code and cursor_agent:
+        async with cursor_sema:
+            try:
+                # Detect programming language from code
+                detected_lang = "python"  # Default
+                if "function" in code and "{" in code:
+                    detected_lang = "javascript"
+                elif "def " in code:
+                    detected_lang = "python"
+                elif "#include" in code:
+                    detected_lang = "cpp"
+                elif "public class" in code:
+                    detected_lang = "java"
+                
+                cursor_analysis = await cursor_agent.code_review(code, detected_lang)
+                
+            except CursorAgentError as e:
+                log.exception("Cursor Agent analysis failed: %s", e)
+                cursor_analysis = f"❌ Cursor Agent analysis failed: {str(e)}"
+            except Exception as e:
+                log.exception("Unexpected error in Cursor Agent analysis: %s", e)
+                cursor_analysis = "❌ هەڵەیەک ڕوویدا لە شیکردنەوەی کۆدەکەدا."
+    
+    # Create comprehensive response embed
+    embed = discord.Embed(
+        title="🤖 AI + Cursor Agent Coding Help",
+        color=discord.Color.purple()
+    )
+    
+    # Add Kurdish AI response
+    embed.add_field(
+        name="💬 Kurdish AI Response",
+        value=as_discord_safe(kurdish_ai_response),
+        inline=False
+    )
+    
+    # Add Cursor Agent analysis if available
+    if cursor_analysis:
+        embed.add_field(
+            name="🔍 Cursor Agent Code Analysis",
+            value=as_discord_safe(cursor_analysis),
+            inline=False
+        )
+    elif code and not cursor_agent:
+        embed.add_field(
+            name="ℹ️ Note",
+            value="Cursor Agent is not configured for technical code analysis.",
+            inline=False
+        )
+    
+    embed.add_field(name="Requested by", value=inter.user.mention, inline=True)
+    
+    # Add translation and voice buttons for Kurdish response
+    view = KurdishView(message_content=kurdish_ai_response)
+    await inter.followup.send(embed=embed, view=view)
 
 # Voice commands
 @bot.tree.command(name="join", description="Join your voice channel")

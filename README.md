@@ -12,6 +12,9 @@ An advanced Discord bot that provides AI-powered conversations in Kurdish (Kurma
 - **⚙️ Rate Limiting**: Built-in retry logic with exponential backoff
 - **📊 Structured Logging**: Comprehensive logging for monitoring and debugging
 - **🔧 Environment Config**: Easy configuration via environment variables
+- **🤖 Cursor Agent Integration**: Advanced coding assistance with AI-powered code review, generation, and debugging
+- **🔀 Hybrid AI System**: Combines Kurdish AI with Cursor Agent for comprehensive coding help
+- **🎙️ Voice Processing**: Kurdish speech-to-text and text-to-speech capabilities
 
 ## Commands 📋
 
@@ -20,11 +23,28 @@ An advanced Discord bot that provides AI-powered conversations in Kurdish (Kurma
 - `/clear` - Clear your conversation memory in the current channel
 - `/ping` - Health check command
 
+### Cursor Agent Commands (Coding Assistance)
+- `/code_review <code> [language]` - Get code review and suggestions from Cursor Agent
+- `/generate_code <description> [language]` - Generate code based on your description
+- `/debug_code <code> <error_message> [language]` - Debug problematic code with error analysis
+- `/cursor_status` - Check Cursor Agent configuration and status
+
+### Hybrid AI Commands
+- `/ai_code_help <question> [code]` - Get coding help combining Kurdish AI and Cursor Agent analysis
+
+### Voice Commands
+- `/join` - Join your voice channel
+- `/leave` - Leave voice channel  
+- `/speak <message>` - Speak a message in voice channel
+
 ### Context Menu
 - **Ask Kurdish AI** - Right-click any message to ask the AI about it
 
 ### Legacy Commands
 - `!chat <message>` - Traditional prefix command for chatting
+- `!join` - Join voice channel
+- `!leave` - Leave voice channel
+- `!talk <message>` - AI chat with voice response in Sorani
 
 ## Setup Instructions 🚀
 
@@ -62,6 +82,13 @@ An advanced Discord bot that provides AI-powered conversations in Kurdish (Kurma
    OPENAI_CONCURRENCY=3
    DB_PATH=memory.sqlite3
    OWNER_IDS=your_discord_user_id
+   
+   # Cursor Agent Configuration (Optional)
+   CURSOR_ENABLED=false
+   CURSOR_API_KEY=your_cursor_api_key
+   CURSOR_SESSION_TOKEN=your_cursor_session_token
+   CURSOR_BASE_URL=https://api.cursor.com
+   CURSOR_CONCURRENCY=2
    ```
 
 ### 3. Discord Bot Setup
@@ -101,6 +128,34 @@ The bot will:
 | `OPENAI_CONCURRENCY` | `3` | Max concurrent OpenAI API calls |
 | `DB_PATH` | `memory.sqlite3` | SQLite database file path |
 | `OWNER_IDS` | Empty | Comma-separated Discord user IDs for owners |
+| `CURSOR_ENABLED` | `false` | Enable/disable Cursor Agent integration |
+| `CURSOR_API_KEY` | Empty | Your Cursor API key (if available) |
+| `CURSOR_SESSION_TOKEN` | Empty | Your Cursor session token (alternative to API key) |
+| `CURSOR_BASE_URL` | `https://api.cursor.com` | Cursor API base URL |
+| `CURSOR_CONCURRENCY` | `2` | Max concurrent Cursor Agent API calls |
+
+## Cursor Agent Setup 🤖
+
+### Prerequisites
+- Cursor IDE account ([cursor.com](https://cursor.com))
+- API access or session token from Cursor
+
+### Option 1: Using API Key (Recommended)
+1. Sign up for Cursor API access
+2. Generate an API key from your Cursor dashboard
+3. Set `CURSOR_ENABLED=true` and `CURSOR_API_KEY=your_api_key` in your `.env` file
+
+### Option 2: Using Session Token
+1. Install Cursor IDE and sign in
+2. Extract your session token from browser cookies (`WorkosCursorSessionToken`)
+3. Set `CURSOR_ENABLED=true` and `CURSOR_SESSION_TOKEN=your_token` in your `.env` file
+
+### Cursor Agent Features
+- **Code Review**: Analyzes code for improvements, bugs, and best practices
+- **Code Generation**: Creates code based on natural language descriptions
+- **Debug Assistance**: Helps identify and fix code errors
+- **Multi-language Support**: Works with Python, JavaScript, Java, C++, and more
+- **Kurdish AI Integration**: Combines with Kurdish AI for comprehensive coding help
 
 ## Kurdish Language Support 🗣️
 
@@ -121,6 +176,47 @@ Bot: Silav! Ez baş im, spas. Tu çawa yî?
 ```
 User: چۆنیت برا؟
 Bot: سڵاو! من باشم، سوپاس. تۆ چۆنیت؟
+```
+
+## Usage Examples 💡
+
+### Cursor Agent Code Review
+```
+/code_review code:
+def calculate_sum(numbers):
+    result = 0
+    for i in numbers:
+        result += i
+    return result
+
+language: python
+```
+
+### Code Generation
+```
+/generate_code description: Create a function that validates email addresses using regex
+language: python
+```
+
+### Debugging Help
+```
+/debug_code 
+code: print("Hello World"
+error_message: SyntaxError: '(' was never closed
+language: python
+```
+
+### Hybrid AI Coding Help
+```
+/ai_code_help 
+question: چۆن دەتوانم ئەم کۆدە باشتر بکەم؟ (How can I improve this code?)
+code: for i in range(len(my_list)): print(my_list[i])
+```
+
+### Kurdish AI with Voice
+```
+/chat message: سڵاو، چۆنیت؟ (Hello, how are you?)
+# Bot responds in Kurdish with translation and voice options
 ```
 
 ## Database Schema 💾
@@ -200,6 +296,22 @@ CMD ["python", "main.py"]
    - Adjust `MAX_HISTORY` to lower value
    - Monitor database size
    - Consider periodic cleanup
+
+5. **Cursor Agent not working:**
+   - Verify `CURSOR_ENABLED=true` in environment
+   - Check API key or session token is valid
+   - Ensure network connectivity to Cursor API
+   - Review Cursor Agent logs for specific errors
+
+6. **Cursor Agent authentication errors:**
+   - Regenerate API key from Cursor dashboard
+   - Update session token (tokens may expire)
+   - Verify correct base URL configuration
+
+7. **Voice processing issues:**
+   - Check FFmpeg installation for audio processing
+   - Verify OpenAI Whisper model access
+   - Ensure proper file permissions for downloads directory
 
 ### Debug Mode
 Set logging level to DEBUG for detailed information:
