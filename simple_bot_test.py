@@ -17,14 +17,11 @@ bot = commands.Bot(command_prefix="/", intents=intents)
 async def on_ready():
     print(f"✅ Logged in as {bot.user}")
     
-    # Streaming presence
-    activity = discord.Streaming(
-        name="Advanced AI in Sorani",   # status text
-        url="https://twitch.tv/yourchannel"  # required for streaming status
-    )
+    # Game activity status
+    activity = discord.Game("Advanced AI in Sorani")
     
     await bot.change_presence(status=discord.Status.online, activity=activity)
-    print("🎮 Set streaming presence: Advanced AI in Sorani")
+    print("🎮 Set game activity: Advanced AI in Sorani")
 
 @bot.command(name="ping")
 async def ping(ctx):

@@ -571,6 +571,11 @@ async def on_ready():
         log.info("Synced %d app commands", len(synced))
     except Exception as e:
         log.exception("Slash sync failed: %s", e)
+    
+    # Set bot activity status
+    activity = discord.Game("Advanced AI in Sorani")
+    await bot.change_presence(status=discord.Status.online, activity=activity)
+    
     log.info("Logged in as %s", bot.user)
 
 @bot.event
