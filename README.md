@@ -1,234 +1,104 @@
-# Discord Kurdish AI Bot 🤖
+# Discord AI Assistant Bot
 
-An advanced Discord bot that provides AI-powered conversations in Kurdish (Kurmanji/Sorani) with intelligent language detection, persistent conversation memory, and comprehensive moderation features.
+A Discord bot that integrates with OpenAI's GPT models to provide AI-powered conversations with text-to-speech support in both Kurdish and English.
 
-## Features ✨
+## Features
 
-- **🗣️ Kurdish-First AI**: Automatic dialect detection (Kurmanji/Sorani) with manual override
-- **💾 Persistent Memory**: Per-user conversation history stored in SQLite database
-- **⚡ Slash Commands**: Modern Discord slash commands with context menus
-- **🛡️ Content Moderation**: OpenAI moderation API integration with safety fallbacks
-- **🔄 Streaming Responses**: Real-time token streaming for faster response delivery
-- **⚙️ Rate Limiting**: Built-in retry logic with exponential backoff
-- **📊 Structured Logging**: Comprehensive logging for monitoring and debugging
-- **🔧 Environment Config**: Easy configuration via environment variables
+- 🤖 AI-powered conversations using OpenAI GPT-4o-mini
+- 🌍 Bilingual support (Kurdish and English)
+- 🔊 Text-to-speech functionality
+- 💬 Conversation history per user
+- 🎵 Voice channel integration
+- 🔒 Secure credential management
 
-## Commands 📋
-
-### Slash Commands
-- `/chat <message>` - Chat with the Kurdish AI bot
-- `/clear` - Clear your conversation memory in the current channel
-- `/ping` - Health check command
-
-### Context Menu
-- **Ask Kurdish AI** - Right-click any message to ask the AI about it
-
-### Legacy Commands
-- `!chat <message>` - Traditional prefix command for chatting
-
-## Setup Instructions 🚀
+## Setup
 
 ### 1. Prerequisites
 
 - Python 3.8 or higher
-- Discord Bot Token ([Discord Developer Portal](https://discord.com/developers/applications))
-- OpenAI API Key ([OpenAI Platform](https://platform.openai.com/api-keys))
+- FFmpeg installed on your system
+- Discord Bot Token
+- OpenAI API Key
 
-### 2. Installation
+### 2. Install Dependencies
 
-1. **Clone or download the project:**
-   ```bash
-   git clone <repository-url>
-   cd discord-kurdish-ai-bot
-   ```
+```bash
+pip install -r requirements.txt
+```
 
-2. **Install dependencies:**
-   ```bash
-   python -m pip install -U -r requirements.txt
-   ```
+### 3. Environment Configuration
 
-3. **Configure environment variables:**
-   ```bash
-   cp .env.example .env
-   ```
-   
-   Edit `.env` file with your actual values:
-   ```env
-   DISCORD_BOT_TOKEN=your_actual_discord_bot_token
-   OPENAI_API_KEY=your_actual_openai_api_key
-   OPENAI_MODEL=gpt-4o-mini
-   KURDISH_DIALECT=auto
-   MAX_HISTORY=10
-   OPENAI_CONCURRENCY=3
-   DB_PATH=memory.sqlite3
-   OWNER_IDS=your_discord_user_id
-   ```
+1. Copy the `.env.example` file to `.env`:
+```bash
+cp .env.example .env
+```
 
-### 3. Discord Bot Setup
+2. Edit `.env` and add your credentials:
+```env
+DISCORD_TOKEN=your_discord_bot_token_here
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
+### 4. Discord Bot Setup
 
 1. Go to [Discord Developer Portal](https://discord.com/developers/applications)
-2. Create a new application and bot
-3. Copy the bot token to your `.env` file
-4. Enable the following bot permissions:
+2. Create a new application
+3. Go to the "Bot" section
+4. Create a bot and copy the token
+5. Enable the following bot permissions:
    - Send Messages
    - Use Slash Commands
-   - Read Message History
-   - Add Reactions
-5. Enable these privileged gateway intents:
-   - Message Content Intent
-6. Invite the bot to your server with the generated OAuth2 URL
+   - Connect to Voice Channels
+   - Speak in Voice Channels
+6. Invite the bot to your server with appropriate permissions
 
-### 4. Running the Bot
+### 5. OpenAI API Setup
 
-```bash
-python main.py
-```
+1. Go to [OpenAI Platform](https://platform.openai.com/)
+2. Create an account and get an API key
+3. Add the API key to your `.env` file
 
-The bot will:
-- Initialize the SQLite database
-- Sync slash commands with Discord
-- Start listening for interactions
+## Usage
 
-## Configuration Options ⚙️
+### Commands
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `DISCORD_BOT_TOKEN` | Required | Your Discord bot token |
-| `OPENAI_API_KEY` | Required | Your OpenAI API key |
-| `OPENAI_MODEL` | `gpt-4o-mini` | OpenAI model to use |
-| `KURDISH_DIALECT` | `auto` | Language mode: `auto`, `kurmanji`, `sorani` |
-| `MAX_HISTORY` | `10` | Messages per user per channel to remember |
-| `OPENAI_CONCURRENCY` | `3` | Max concurrent OpenAI API calls |
-| `DB_PATH` | `memory.sqlite3` | SQLite database file path |
-| `OWNER_IDS` | Empty | Comma-separated Discord user IDs for owners |
+- `/ask <question>` - Ask the AI assistant a question
+- `/clear` - Clear your conversation history
+- `/join` - Join your current voice channel
+- `/leave` - Leave the voice channel
 
-## Kurdish Language Support 🗣️
+### Features
 
-### Dialect Detection
-- **Auto Mode**: Automatically detects Kurmanji or Sorani from user input
-- **Kurmanji Mode**: Forces responses in Kurmanji (Latin script)
-- **Sorani Mode**: Forces responses in Sorani (Arabic script)
+- **Language Detection**: Automatically detects if you're asking in Kurdish or English
+- **Voice Response**: If you're in a voice channel, the bot will speak the AI's response
+- **Conversation Memory**: The bot remembers your conversation history
+- **Bilingual Support**: Responds in the same language you asked the question
 
-### Language Examples
+## Security Notes
 
-**Kurmanji (Latin):**
-```
-User: Çawa ye heval?
-Bot: Silav! Ez baş im, spas. Tu çawa yî?
-```
+⚠️ **IMPORTANT**: Never commit your `.env` file or hardcode credentials in your code. The bot will now safely load credentials from environment variables.
 
-**Sorani (Arabic):**
-```
-User: چۆنیت برا؟
-Bot: سڵاو! من باشم، سوپاس. تۆ چۆنیت؟
-```
-
-## Database Schema 💾
-
-The bot uses SQLite to store conversation history:
-
-```sql
-CREATE TABLE memory (
-    guild_id    INTEGER,
-    channel_id  INTEGER,
-    user_id     INTEGER,
-    messages    TEXT,  -- JSON array of message objects
-    PRIMARY KEY (guild_id, channel_id, user_id)
-);
-```
-
-## Error Handling & Safety 🛡️
-
-- **Content Moderation**: All messages are screened using OpenAI's moderation API
-- **Rate Limiting**: Exponential backoff prevents API abuse
-- **Graceful Degradation**: Bot continues operating even if moderation fails
-- **Message Sanitization**: Prevents @everyone/@here abuse
-- **Length Limits**: Messages are truncated to Discord's limits
-
-## Logging 📊
-
-The bot provides structured logging with different levels:
-
-- **INFO**: Bot startup, command sync, user interactions
-- **WARNING**: Moderation failures, API issues
-- **ERROR**: Critical failures, database errors
-- **DEBUG**: Detailed operation information
-
-## Deployment 🚀
-
-### Local Development
-```bash
-python main.py
-```
-
-### Production Deployment
-1. Use a process manager like `systemd` or `pm2`
-2. Set up log rotation
-3. Use environment variables for configuration
-4. Consider using Docker for containerization
-
-### Docker Example
-```dockerfile
-FROM python:3.11-slim
-WORKDIR /app
-COPY requirements.txt .
-RUN pip install -r requirements.txt
-COPY . .
-CMD ["python", "main.py"]
-```
-
-## Troubleshooting 🔧
+## Troubleshooting
 
 ### Common Issues
 
-1. **Bot not responding to slash commands:**
-   - Check if commands are synced (restart bot)
-   - Verify bot has necessary permissions
-   - Check console for sync errors
+1. **FFmpeg not found**: Install FFmpeg on your system
+   - Ubuntu/Debian: `sudo apt install ffmpeg`
+   - macOS: `brew install ffmpeg`
+   - Windows: Download from [FFmpeg website](https://ffmpeg.org/download.html)
 
-2. **OpenAI API errors:**
-   - Verify API key is correct and has credits
-   - Check model availability
-   - Review rate limits
+2. **Voice connection issues**: Make sure the bot has permission to join and speak in voice channels
 
-3. **Database errors:**
-   - Ensure write permissions for database file
-   - Check disk space
-   - Verify SQLite installation
+3. **OpenAI API errors**: Check your API key and ensure you have sufficient credits
 
-4. **Memory issues:**
-   - Adjust `MAX_HISTORY` to lower value
-   - Monitor database size
-   - Consider periodic cleanup
+### Error Handling
 
-### Debug Mode
-Set logging level to DEBUG for detailed information:
-```python
-logging.basicConfig(level=logging.DEBUG)
-```
+The bot includes comprehensive error handling and will display helpful error messages when something goes wrong.
 
-## Contributing 🤝
+## Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
+Feel free to submit issues and enhancement requests!
 
-## License 📄
+## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support 💬
-
-For support and questions:
-- Create an issue on GitHub
-- Check the troubleshooting section
-- Review the logs for error details
-
-## Acknowledgments 🙏
-
-- OpenAI for the GPT API
-- Discord.py community
-- Kurdish language community
-- Contributors and testers
+This project is open source and available under the MIT License.
