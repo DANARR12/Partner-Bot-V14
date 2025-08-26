@@ -1,4 +1,4 @@
-# 🎤 Discord Voice Channel Request Bot
+# 🎤 Diccord Voice Channel Request Bot
 
 A Discord bot that allows users to request permission to join voice channels by sending DMs to current channel members for approval.
 
